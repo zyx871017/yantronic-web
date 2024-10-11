@@ -1,101 +1,77 @@
 import Image from "next/image";
+import { Anchor } from "antd";
+import Link from "antd/es/anchor/AnchorLink";
 
-export default function Home() {
+export default async function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="w-full bg-slate-200">
+      <div className="fixed bg-slate-200 flex z-10 top-0 items-center h-[50px] w-full justify-between">
+        <div className="w-[924px] mx-auto flex items-center justify-between">
+          <div className="flex items-center">
+            <Image width={34} height={34} src="/img/logo.png" alt="" />
+            <span className="ml-2 font-bold text-lg">言创智信</span>
+          </div>
+          <Anchor direction="horizontal" targetOffset={80}>
+            <Link className="mr-10 text-sm" href="#1" title="首页" />
+            <Link className="mr-10 text-sm" href="#2" title="解决方案" />
+            <Link className="text-sm" href="#3" title="关于我们" />
+          </Anchor>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      <div
+        id="1"
+        className="w-full h-[100vh] bg-center bg-cover relative pt-14"
+      >
+        <div className="w-[90vw] h-[80vh] bg-[url('/img/firstBack.jpeg')] bg-cover mx-auto relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div className="font-bold text-6xl text-white">言创智信</div>
+            <div className="text-2xl mt-5 text-white w-[90vw]">
+              通过开创性生成式AI，实现智能技术与人类社会的深度融合
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full mb-[120px]" id="2">
+        <div className="text-3xl text-center font-extrabold">解决方案</div>
+        <div className="flex gap-3 justify-center mt-10">
+          <div className="text-lg flex flex-col justify-between text-white p-4 bg-[url('/img/imgGen.jpeg')] bg-cover bg-center w-[300px] h-[420px] rounded-[5px]">
+            <div>图像生成</div>
+            <div>推送图像创意产业的发展</div>
+          </div>
+          <div className="text-lg flex flex-col justify-between text-white p-4 bg-[url('/img/document.jpeg')] bg-cover bg-center w-[300px] h-[420px] rounded-[5px]">
+            <div>文本创作</div>
+            <div>提升行业创造力和生产力</div>
+          </div>
+          <div className="text-lg flex flex-col justify-between text-white p-4 bg-[url('/img/data.jpeg')] bg-cover bg-center w-[300px] h-[420px] rounded-[5px]">
+            <div>数据模拟</div>
+            <div>提供数据驱动的智能解决方案</div>
+          </div>
+        </div>
+      </div>
+      <div className="w-full" id="3">
+        <div className="text-3xl text-center font-extrabold">关于我们</div>
+        <div className="w-[41vw] mx-auto mt-6 text-center">
+          言创智信是一家前瞻性的人工智能公司，专注于开发和应用通用人工智能（AGI）技术。我们相信，通过生成式AI的创新，可以推动智能技术的全面发展，实现智能与人类的深度协同。
+        </div>
+        <div className="bg-[url('/img/about.jpeg')] rounded-md w-[924px] h-[45vh] bg- bg-cover mx-auto mt-5"></div>
+      </div>
+      <div className="bg-white h-[180px] w-full mt-[50px] flex items-center">
+        <div className="w-[41vw] mx-auto flex justify-between items-center">
+          <div>
+            <div className="mb-1 text-md font-extrabold text-lg">联系我们</div>
+            <div className="mb-1">地址：北京市环球贸易中心A座1702</div>
+            <div className="mb-1">电话：13911535863</div>
+            <div>邮箱：vip@yantronic.com</div>
+          </div>
+          <div>
+            <div className="bg-[url('/img/qrcode.jpg')] w-[88px] h-[88px] bg-cover bg-center"></div>
+            <div className="text-center text-sm">公众号</div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-black h-[40px] w-ful text-center text-sm text-white leading-[40px]">
+        言创智信 Copyright © 2023-2024 版权所有
+      </div>
     </div>
   );
 }
