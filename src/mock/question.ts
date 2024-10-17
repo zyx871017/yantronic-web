@@ -1,4 +1,6 @@
-export const historyList = [
+import { QuestionItemType } from "@/types/question";
+
+export const historyList: QuestionItemType[] = [
   {
     title: "我的能力介绍",
     id: 1,

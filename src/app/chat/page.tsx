@@ -13,12 +13,11 @@ export default async function Home() {
     <div className="w-full h-full relative">
       <div className="absolute top-0 bg-left-bg left-0 bottom-0 w-left-width border-r border-border hidden sm:block">
         <div className="text-black mt-3 mr-2.5 ml-4 flex items-center">
-          <Image src={logo} alt="" className="size-9" />
-          <span className="ml-2 font-semibold">彩小言</span>
+          <Image src={logo} alt="" className="h-9 w-[96px]" />
         </div>
         <div className="flex mt-4 mb-1.5 px-3">
           <Link
-            href="/"
+            href="/chat"
             className="border-[0.5px] w-full h-10 border-border-main flex items-center rounded-xl px-2 py-1.5 bg-main-light cursor-pointer"
           >
             <div className="size-6 flex justify-center items-center">
@@ -32,11 +31,11 @@ export default async function Home() {
       <div className="pl-left-width size-full">
         <div className="size-full relative">
           <LoginButton />
-          <div className="text-center w-[318px] mt-[50%] ml-[50%] transform -translate-x-1/2 -translate-y-2/3 float-left">
+          <div className="text-center w-[318px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <Image
               src={logo}
               alt=""
-              className="size-28 inline-block mb-10"
+              className="h-28 inline-block mb-10"
             ></Image>
             <div className="text-black mb-10">
               <div>Hi~很高兴遇见你！🎉🎉🎉</div>

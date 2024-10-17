@@ -8,8 +8,7 @@ export default async function Home() {
       <div className="fixed bg-slate-200 flex z-10 top-0 items-center h-[50px] w-full justify-between">
         <div className="w-[924px] mx-auto flex items-center justify-between">
           <div className="flex items-center">
-            <Image width={34} height={34} src="/img/logo.png" alt="" />
-            <span className="ml-2 font-bold text-lg">言创智信</span>
+            <Image height={30} width={88} src="/img/logo.png" alt="" />
           </div>
           <Anchor direction="horizontal" targetOffset={80}>
             <Link className="mr-10 text-sm" href="#1" title="首页" />

@@ -15,7 +15,7 @@ export default function SideMenu(props: IProps) {
       {data.map((item) => {
         return (
           <Link
-            href={`/${item.id}`}
+            href={`/chat/${item.id}`}
             key={item.id}
             className={cls(
               "text-black  rounded-lg px-2.5 py-1.5 text-sm cursor-pointer",
