@@ -1,29 +1,25 @@
 "use client";
-import { Editor, EditorCommand, EditorState, RichUtils } from "draft-js";
-import "draft-js/dist/Draft.css";
+import { Button } from "antd";
 import { useState } from "react";
-export default function ReactEditor() {
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
-  const editorChange = (editorState: EditorState) =>
-    setEditorState(editorState);
-  const handleKEyCommand = (
-    command: EditorCommand,
-    editorState: EditorState
-  ) => {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      editorChange(newState);
-      return "handled";
-    }
-    return "not-handled";
-  };
+import { createEditor } from "slate";
+import { Editable, Slate, withReact } from "slate-react";
+
+type itemType = "paragraph";
+export default function CaiEditor() {
+  const [editor] = useState(() => withReact(createEditor()));
+
+  const initialValue = [
+    {
+      type: "paragraph" as itemType,
+      children: [{ text: "A line of text in a paragraph." }],
+    },
+  ];
   return (
-    <Editor
-      editorState={editorState}
-      handleKeyCommand={handleKEyCommand}
-      onChange={editorChange}
-    />
+    <div>
+      <Button>加粗</Button>
+      <Slate editor={editor} initialValue={initialValue}>
+        <Editable></Editable>
+      </Slate>
+    </div>
   );
 }
