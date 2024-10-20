@@ -5,7 +5,16 @@ const request = axios.create({
 });
 
 request.interceptors.request.use(
-  (config) => config,
+  (config) => {
+    console.log(config);
+    const token = localStorage.getItem("token");
+    // @ts-expect-error no need check
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+    return config;
+  },
   (error) => Promise.reject(error)
 );
 

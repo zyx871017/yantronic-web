@@ -14,5 +14,4 @@ export async function POST(request: Request) {
   } else {
     return NextResponse.json({ msg: resData.msg, code: -1 });
   }
-  console.log(resData);
 }

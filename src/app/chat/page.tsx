@@ -31,31 +31,12 @@ export default async function Home() {
       <div className="pl-left-width size-full">
         <div className="size-full relative">
           <LoginButton />
-          <div className="text-center w-[318px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <Image
-              src={logo}
-              alt=""
-              className="h-28 inline-block mb-10"
-            ></Image>
-            <div className="text-black mb-10">
-              <div>Hi~很高兴遇见你！🎉🎉🎉</div>
-              <div className="max-w-[318px]">
-                我是彩小言，一个专注于彩票信息的智能聊天助手，我的目标是为您提供最新、最准确的彩票数据和分析，帮助您更好地了解彩票的世界。
-              </div>
-            </div>
-            <div className="mb-2.5 text-sm">你可以这样问:</div>
-            <div className="mb-2.5 px-2.5 inline-block w-fit border text-sm h-12 leading-[48px] text-black rounded-[24px] cursor-pointer">
-              💡你能介绍一些常见的彩票种类吗？
-            </div>
-            <div className="mb-2.5 px-2.5 inline-block w-fit border text-sm h-12 leading-[48px] text-black rounded-[24px] cursor-pointer">
-              💡不同彩票的中奖概率有多大？？
-            </div>
-            <div className="px-2.5 inline-block w-fit border text-sm h-12 leading-[48px] text-black rounded-[24px] cursor-pointer">
-              💡如何查询最新的彩票开奖结果？？
-            </div>
-          </div>
-          <div className="absolute bottom-5 left-6 right-6">
+          <div className="px-5 text-center w-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="w-full mb-10 text-4xl font-semibold text-center">有什么可以帮您？？</div>
             <ChatInput />
+            <div className="flex">
+
+            </div>
           </div>
         </div>
       </div>

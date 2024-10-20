@@ -33,7 +33,7 @@ export default function LoginButton() {
       "/api/getVerifyCode",
       {
         phone,
-        type: "reg",
+        type: "login",
       }
     );
     console.log(res);

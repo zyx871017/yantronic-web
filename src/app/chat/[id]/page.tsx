@@ -7,11 +7,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import SideMenu from "../components/SideMenu";
 import Link from "next/link";
 import ChatInput from "../components/ChatInput";
-import dynamic from "next/dynamic";
 import { QuestionItemType } from "@/types/question";
-const ReactEditor = dynamic(() => import("../components/ReactEditor"), {
-  ssr: false,
-});
 
 export default function Home({ params }: { params: { id: string } }) {
   const [dataList, setDataList] = useState<QuestionItemType[]>([]);
@@ -43,7 +39,6 @@ export default function Home({ params }: { params: { id: string } }) {
       </div>
       <div className="pl-left-width size-full">
         <div className="size-full relative">
-          <ReactEditor />
           <div className="absolute bottom-5 left-6 right-6">
             <ChatInput />
           </div>
