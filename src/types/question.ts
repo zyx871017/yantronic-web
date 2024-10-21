@@ -1,9 +1,9 @@
 export type ChatItemType = {
-  type: string;
   id: number;
-  content: string;
-  user: string;
-  time: string;
+  conversationId: number;
+  question: string;
+  createTime: string;
+  answer: string;
 };
 
 export type QuestionItemType = {

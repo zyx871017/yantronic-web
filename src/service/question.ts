@@ -1,8 +1,24 @@
 import { historyList } from "@/mock/question";
 import clientRequest from "./clientRequest";
+import { ChatItemType } from "@/types/question";
 
-export async function getHistoryList() {
-  return { code: 200, msg: "", data: historyList };
+export async function getHistoryList(params: {
+  page: number;
+  pageSize: number;
+}) {
+  return clientRequest.get("/api/getChatList", { params });
+}
+
+export async function getChatDetail(params: {
+  page: number;
+  pageSize: number;
+  conversationId: number;
+}): Promise<{
+  code: number;
+  msg: string;
+  data: { hasMore: boolean; items: ChatItemType[]; total: number };
+}> {
+  return clientRequest.get("/api/getChatDetail", { params });
 }
 
 interface IAskQuestionRes {
@@ -13,7 +29,7 @@ interface IAskQuestionRes {
 export async function askQuestion(data: {
   prompt: string;
 }): Promise<IAskQuestionRes> {
-  return clientRequest.post("/api/fetAsk", data);
+  return clientRequest.post("/api/fetchAsk", data);
 }
 
 export async function saveChat(data: {

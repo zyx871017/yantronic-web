@@ -7,11 +7,18 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { conversationId, question, answer, headers } = body;
+  const Headers = request.headers;
+  const { conversationId, question, answer } = body;
+  console.log(Headers.get("Authorization"));
   const resData = await serverRequest.post(
     "https://cxy.lianwo123.com/api/v1/conversation/question",
     { conversationId, question, answer },
-    { headers }
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: Headers.get("Authorization"),
+      },
+    }
   );
   console.log(resData);
   if (resData) {

@@ -1,49 +1,39 @@
 "use client";
-import { useEffect, useState } from "react";
-import logo from "/public/img/logo.png";
-import { getHistoryList } from "@/service/question";
-import Image from "next/image";
-import { AiOutlinePlus } from "react-icons/ai";
-import SideMenu from "../components/SideMenu";
-import Link from "next/link";
+import { getChatDetail } from "@/service/question";
 import ChatInput from "../components/ChatInput";
-import { QuestionItemType } from "@/types/question";
+import { useEffect, useState } from "react";
+import { ChatItemType } from "@/types/question";
 
-export default function Home({ params }: { params: { id: string } }) {
-  const [dataList, setDataList] = useState<QuestionItemType[]>([]);
-  const getData = async () => {
-    const { data } = await getHistoryList();
-    setDataList(data);
+export default function ChatDetail({ params }: { params: { id: string } }) {
+  const [dataList, setData] = useState<ChatItemType[]>([]);
+  const initData = async () => {
+    const res = await getChatDetail({
+      page: 1,
+      pageSize: 10,
+      conversationId: +params.id,
+    });
+    if (res.code === 0) {
+      setData(res.data.items);
+    }
   };
   useEffect(() => {
-    getData();
-  });
+    initData();
+  }, []);
   return (
-    <div className="w-full h-full relative">
-      <div className="absolute top-0 bg-left-bg left-0 bottom-0 w-left-width border-r border-border hidden sm:block">
-        <div className="text-black mt-3 mr-2.5 ml-4 flex items-center">
-          <Image src={logo} alt="" className="h-9 w-[96px]" />
-        </div>
-        <div className="flex mt-4 mb-1.5 px-3">
-          <Link
-            href="/chat"
-            className="border-[0.5px] w-full h-10 border-border-main flex items-center rounded-xl px-2 py-1.5 bg-main-light cursor-pointer"
-          >
-            <div className="size-6 flex justify-center items-center">
-              <AiOutlinePlus className="text-main size-4" />
+    <>
+      <div className="p-6">
+        {dataList.map((item) => (
+          <div key={item.id}>
+            <div className="flex flex-col items-end px-5 py-4">
+              <div className="px-5 py-2.5 rounded-3xl bg-slate-100">{item.question}</div>
             </div>
-            <span className="text-main text-sm font-semibold">新对话</span>
-          </Link>
-        </div>
-        <SideMenu data={dataList} currentId={+params.id}></SideMenu>
-      </div>
-      <div className="pl-left-width size-full">
-        <div className="size-full relative">
-          <div className="absolute bottom-5 left-6 right-6">
-            <ChatInput id={params.id} />
+            <div className="px-5 py-4 text-base leading-7">{item.answer}</div>
           </div>
-        </div>
+        ))}
       </div>
-    </div>
+      <div className="absolute bottom-5 left-6 right-6">
+        <ChatInput id={params.id} />
+      </div>
+    </>
   );
 }

@@ -7,7 +7,7 @@ import { message } from "antd";
 import { useLoading } from "@/contexts/LoadingContext";
 import { isLogin } from "@/utils";
 import { useLoginOpen } from "@/contexts/LoginContext";
-import { askQuestion } from "@/service/question";
+import { askQuestion, saveChat } from "@/service/question";
 export default function ChatInput(props: { id?: string }) {
   const [inputValue, setInputValue] = useState("");
   const { setIsLoading } = useLoading();
@@ -31,13 +31,18 @@ export default function ChatInput(props: { id?: string }) {
       return;
     }
     setIsLoading(true);
-    const res = await askQuestion({ prompt: inputValue });
-    console.log(res);
-    if (res.code === 0) {
-      // const saveRes = await request.post("/api/saveChat", {
-      //   conversationId: props.id,
-      // });
-      // console.log(saveRes);
+    try {
+      const res = await askQuestion({ prompt: inputValue });
+      if (res.code === 0) {
+        const saveRes = await saveChat({
+          conversationId: props.id,
+          question: inputValue,
+          answer: res.answer,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      setIsLoading(false);
     }
     setIsLoading(false);
   };
