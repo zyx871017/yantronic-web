@@ -40,7 +40,7 @@ export default function Home({ params }: { params: { id: string } }) {
       <div className="pl-left-width size-full">
         <div className="size-full relative">
           <div className="absolute bottom-5 left-6 right-6">
-            <ChatInput />
+            <ChatInput id={params.id} />
           </div>
         </div>
       </div>

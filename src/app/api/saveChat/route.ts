@@ -1,4 +1,4 @@
-import { saveChat } from "@/service/question";
+import serverRequest from "@/service/serverRequest";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -7,8 +7,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { conversationId, question, answer } = body;
-  const resData = await saveChat({ conversationId, question, answer });
+  const { conversationId, question, answer, headers } = body;
+  const resData = await serverRequest.post(
+    "https://cxy.lianwo123.com/api/v1/conversation/question",
+    { conversationId, question, answer },
+    { headers }
+  );
   console.log(resData);
   if (resData) {
     return NextResponse.json({

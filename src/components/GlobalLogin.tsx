@@ -1,19 +1,17 @@
 "use client";
-import request from "@/service/fetch";
+import { useLoginOpen } from "@/contexts/LoginContext";
+import { getVerifyCode, verifyCode } from "@/service/user";
 import { Button, Checkbox, message, Modal } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
-export default function LoginButton() {
-  const [modalOpen, setModalOpen] = useState(false);
+export default function GlobalLogin() {
+  const { loginOpen, setLoginOpen } = useLoginOpen();
   const [codeOpen, setCodeOpen] = useState(false);
   const [check, setCheck] = useState(false);
   const [countDown, setCountDown] = useState(0);
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
-  const openLogin = () => {
-    setModalOpen(true);
-  };
   useEffect(() => {
     if (countDown > 0) {
       const timerId = setTimeout(() => setCountDown(countDown - 1), 1000);
@@ -26,17 +24,10 @@ export default function LoginButton() {
       return;
     }
     if (!check) {
-      message.error("请阅读并同意彩小言的“使用协议”和“隐私协议”");
+      message.error("请阅读并同意言创的“使用协议”和“隐私协议”");
       return;
     }
-    const res: { code: number; msg: string } = await request.post(
-      "/api/getVerifyCode",
-      {
-        phone,
-        type: "login",
-      }
-    );
-    console.log(res);
+    const res: { code: number; msg: string } = await getVerifyCode({ phone });
     setCountDown(60);
 
     if (res.code === 0) {
@@ -46,7 +37,7 @@ export default function LoginButton() {
     }
   };
   const closeModal = () => {
-    setModalOpen(false);
+    setLoginOpen(false);
   };
   const closeCodeModal = () => {
     setCodeOpen(false);
@@ -67,34 +58,30 @@ export default function LoginButton() {
     }
     setCode(e.target.value);
     if (value.length === 6) {
-      const res: { code: number; msg: string } = await request.post(
-        "/api/verifyCode",
-        {
-          phone,
-          code: value,
-        }
-      );
+      const res: { code: number; msg: string } = await verifyCode({
+        phone,
+        code: value,
+        type: "login",
+      });
       if (res.code === 0) {
-        setCodeOpen(true);
+        setCodeOpen(false);
+        setLoginOpen(false);
       } else {
         message.error(res.msg);
       }
     }
   };
   return (
-    <div className="absolute top-4 right-4">
-      <Button type="primary" onClick={openLogin}>
-        登录
-      </Button>
+    <>
       <Modal
         onCancel={closeModal}
         footer={null}
         width={400}
         centered
-        open={modalOpen}
+        open={loginOpen}
       >
         <div className="flex flex-col items-center">
-          <div className="text-lg font-semibold mb-10">登录以解锁更多功能</div>
+          <div className="text-lg font-semibold mb-10">手机号登陆</div>
           <input
             className="outline-none border-none w-full h-12 bg-slate-100 rounded-full px-4 mb-4"
             placeholder="请输入手机号"
@@ -110,7 +97,7 @@ export default function LoginButton() {
           </Button>
           <div className="mb-4">
             <Checkbox onChange={handleCheck} className="!mr-2" />
-            <span className="mr-1">已阅读并同意豆包的</span>
+            <span className="mr-1">已阅读并同意言创的</span>
             <Link className="mr-1" href="">
               使用协议
             </Link>
@@ -145,6 +132,6 @@ export default function LoginButton() {
           </Button>
         </div>
       </Modal>
-    </div>
+    </>
   );
 }

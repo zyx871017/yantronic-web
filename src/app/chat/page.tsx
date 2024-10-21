@@ -5,7 +5,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import SideMenu from "./components/SideMenu";
 import Link from "next/link";
 import ChatInput from "./components/ChatInput";
-import LoginButton from "./components/LoginButton";
+import LoginButton from "../components/LoginButton";
 
 export default async function Home() {
   const { data } = await getHistoryList();
@@ -32,11 +32,11 @@ export default async function Home() {
         <div className="size-full relative">
           <LoginButton />
           <div className="px-5 text-center w-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div className="w-full mb-10 text-4xl font-semibold text-center">有什么可以帮您？？</div>
-            <ChatInput />
-            <div className="flex">
-
+            <div className="w-full mb-10 text-4xl font-semibold text-center">
+              有什么可以帮您？？
             </div>
+            <ChatInput />
+            <div className="flex"></div>
           </div>
         </div>
       </div>

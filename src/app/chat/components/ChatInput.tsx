@@ -4,11 +4,14 @@ import micPng from "/public/img/mic.png";
 import askPng from "/public/img/ask.png";
 import { ChangeEvent, useState, KeyboardEvent } from "react";
 import { message } from "antd";
-import request from "@/service/fetch";
 import { useLoading } from "@/contexts/LoadingContext";
-export default function ChatInput() {
+import { isLogin } from "@/utils";
+import { useLoginOpen } from "@/contexts/LoginContext";
+import { askQuestion } from "@/service/question";
+export default function ChatInput(props: { id?: string }) {
   const [inputValue, setInputValue] = useState("");
   const { setIsLoading } = useLoading();
+  const { setLoginOpen } = useLoginOpen();
 
   const inputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -19,15 +22,23 @@ export default function ChatInput() {
     }
   };
   const fetchQuestion = async () => {
+    if (!isLogin()) {
+      setLoginOpen(true);
+      return;
+    }
     if (!inputValue) {
       message.error("您还没有向我提问");
       return;
     }
     setIsLoading(true);
-    const res = await request.post("/api/fetchAsk", { prompt: inputValue });
+    const res = await askQuestion({ prompt: inputValue });
     console.log(res);
-    const saveRes = await request.post("/api/saveChat", {});
-    console.log(saveRes);
+    if (res.code === 0) {
+      // const saveRes = await request.post("/api/saveChat", {
+      //   conversationId: props.id,
+      // });
+      // console.log(saveRes);
+    }
     setIsLoading(false);
   };
   return (

@@ -4,6 +4,8 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "./globals.css";
 import GlobalLoading from "@/components/GlobalLoading";
 import { LoadingProvider } from "@/contexts/LoadingContext";
+import { LoginOpenProvider } from "@/contexts/LoginContext";
+import GlobalLogin from "@/components/GlobalLogin";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,8 +47,11 @@ export default function RootLayout({
       >
         <AntdRegistry>
           <LoadingProvider>
-            <GlobalLoading />
-            {children}
+            <LoginOpenProvider>
+              <GlobalLogin />
+              <GlobalLoading />
+              {children}
+            </LoginOpenProvider>
           </LoadingProvider>
         </AntdRegistry>
       </body>

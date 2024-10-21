@@ -1,20 +1,36 @@
-import request from "./fetch";
-
-export async function fetchLogin(data: {
-  phone: string;
-  type: string;
-  code: string;
-}) {
-  return request.post("https://cxy.lianwo123.com/api/v1/account/msg_login", {
-    ...data,
-    source: "web",
-    timestamp: new Date().getTime + "",
-  });
-}
+import { userDataType } from "@/types/user";
+import clientServer from "./clientRequest";
 
 export async function getVerifyCode(params: {
   phone: string;
-  type: string;
 }): Promise<{ code: number; msg: string }> {
-  return request.post("https://cxy.lianwo123.com/api/v1/account/code", params);
+  return clientServer.post("/api/getVerifyCode", {
+    ...params,
+    type: "login",
+  });
+}
+
+interface IVerifyCodeRes {
+  code: number;
+  msg: string;
+  data: userDataType;
+}
+
+export async function verifyCode(params: {
+  phone: string;
+  type: string;
+  code: string;
+}): Promise<IVerifyCodeRes> {
+  const res: IVerifyCodeRes = await clientServer.post(
+    "/api/verifyCode",
+    params
+  );
+  if (res.code === 0) {
+    const { data } = res;
+    localStorage.setItem("token", data.session_id);
+    localStorage.setItem("avatar", data.avatar);
+    localStorage.setItem("username", data.username);
+    return res;
+  }
+  return res;
 }
