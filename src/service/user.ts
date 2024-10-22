@@ -34,3 +34,8 @@ export async function verifyCode(params: {
   }
   return res;
 }
+
+export async function fetchLogout(): Promise<IVerifyCodeRes> {
+  const res: IVerifyCodeRes = await clientServer.post("/api/logout");
+  return res;
+}

@@ -10,7 +10,7 @@ export default function SideMenu() {
   const { id } = useParams();
   const [dataList, setDataList] = useState<QuestionItemType[]>([]);
   const getData = async () => {
-    const { data } = await getHistoryList({ page: 1, pageSize: 10 });
+    const { data } = await getHistoryList({ page: 1, pageSize: 30 });
     setDataList(data.items);
   };
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function SideMenu() {
   }, []);
 
   return (
-    <div className="px-3 flex flex-col gap-[2px]">
+    <div className="px-3 flex flex-col gap-[2px] flex-1 overflow-y-auto">
       {dataList.map((item) => {
         return (
           <Link

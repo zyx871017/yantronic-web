@@ -7,6 +7,7 @@ import { LoadingProvider } from "@/contexts/LoadingContext";
 import { LoginOpenProvider } from "@/contexts/LoginContext";
 import GlobalLogin from "@/components/GlobalLogin";
 import { ChatProvider } from "@/contexts/ChatContext";
+import DarkModeHandler from "@/components/DarkModeHandler";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -46,6 +47,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <DarkModeHandler />
         <AntdRegistry>
           <LoadingProvider>
             <LoginOpenProvider>

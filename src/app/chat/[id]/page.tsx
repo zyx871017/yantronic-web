@@ -30,7 +30,11 @@ export default function ChatDetail({ params }: { params: { id: string } }) {
   };
   return (
     <>
-      <div ref={divRef} className="p-6 overflow-y-auto h-[80vh]">
+      <div
+        ref={divRef}
+        className="p-6 overflow-y-auto"
+        style={{ height: "calc(100vh - 132px)" }}
+      >
         {chatList.reverse().map((item) => (
           <div key={item.id}>
             <div className="flex flex-col items-end px-5 py-4">

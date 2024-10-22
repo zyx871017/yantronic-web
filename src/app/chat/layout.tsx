@@ -12,7 +12,7 @@ export default function ChatLayout({
 }>) {
   return (
     <div className="w-full h-full relative">
-      <div className="absolute top-0 bg-left-bg left-0 bottom-0 w-left-width border-r border-border hidden sm:block">
+      <div className="absolute top-0 bg-left-bg left-0 bottom-0 w-left-width border-r border-border hidden sm:flex flex-col">
         <div className="text-black mt-3 mr-2.5 ml-4 flex items-center">
           <Image src={logo} alt="" className="h-9 w-[96px]" />
         </div>
