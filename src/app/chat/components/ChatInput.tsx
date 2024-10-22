@@ -8,10 +8,14 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { isLogin } from "@/utils";
 import { useLoginOpen } from "@/contexts/LoginContext";
 import { askQuestion, saveChat } from "@/service/question";
+import { useRouter } from "next/navigation";
+import { useChatList } from "@/contexts/ChatContext";
 export default function ChatInput(props: { id?: string }) {
   const [inputValue, setInputValue] = useState("");
+  const { updateChatList, chatList } = useChatList();
   const { setIsLoading } = useLoading();
   const { setLoginOpen } = useLoginOpen();
+  const router = useRouter();
 
   const inputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -31,14 +35,31 @@ export default function ChatInput(props: { id?: string }) {
       return;
     }
     setIsLoading(true);
+    const messages: { role: "user" | "assistant"; content: string }[] = [];
+    chatList.forEach((item) => {
+      messages.push({ role: "user", content: item.question });
+      messages.push({ role: "assistant", content: item.answer });
+    });
+    messages.push({ role: "user", content: inputValue });
     try {
-      const res = await askQuestion({ prompt: inputValue });
+      const res = await askQuestion({ messages });
       if (res.code === 0) {
         const saveRes = await saveChat({
           conversationId: props.id,
           question: inputValue,
           answer: res.answer,
         });
+        const {
+          answer: {
+            data: { conversationId, questionId },
+          },
+        } = saveRes;
+        localStorage.setItem("typingId", questionId + "");
+        if (props.id) {
+          updateChatList();
+        } else {
+          router.push(`/chat/${conversationId}`);
+        }
       }
     } catch (e) {
       console.log(e);

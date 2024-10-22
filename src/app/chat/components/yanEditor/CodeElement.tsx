@@ -1,10 +1,20 @@
-import { RenderElementProps } from "slate-react";
+"use client";
+import hljs from "highlight.js";
+import "highlight.js/styles/atom-one-dark.css";
+import { useEffect, useRef } from "react";
 
-const CodeElement = (props: RenderElementProps) => {
-  console.log(props.children);
+const CodeElement = ({ children }: any) => {
+  const codeRef = useRef(null);
+
+  useEffect(() => {
+    if (codeRef.current) {
+      hljs.highlightElement(codeRef.current);
+    }
+  }, []);
+
   return (
-    <pre {...props.attributes}>
-      <code>{props.children}</code>
+    <pre className="mb-1">
+      <code ref={codeRef}>{children}</code>
     </pre>
   );
 };

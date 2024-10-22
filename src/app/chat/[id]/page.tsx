@@ -1,33 +1,50 @@
 "use client";
-import { getChatDetail } from "@/service/question";
 import ChatInput from "../components/ChatInput";
-import { useEffect, useState } from "react";
-import { ChatItemType } from "@/types/question";
+import { useEffect, useRef, useState } from "react";
+import TypeWrite from "../components/TypeWrite";
+import { useLoading } from "@/contexts/LoadingContext";
+import { useChatList } from "@/contexts/ChatContext";
+import MarkdownReader from "../components/yanEditor/MarkdownReader";
 
 export default function ChatDetail({ params }: { params: { id: string } }) {
-  const [dataList, setData] = useState<ChatItemType[]>([]);
+  const { updateChatList, chatList } = useChatList();
+  const { setIsLoading } = useLoading();
+  const divRef = useRef<HTMLDivElement>(null);
+  const [typingId, setTypingId] = useState(-1);
   const initData = async () => {
-    const res = await getChatDetail({
-      page: 1,
-      pageSize: 10,
-      conversationId: +params.id,
-    });
-    if (res.code === 0) {
-      setData(res.data.items);
-    }
+    setIsLoading(true);
+    await updateChatList();
+    setIsLoading(false);
   };
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const id = +(localStorage?.getItem("typingId") || -1);
+      setTypingId(id);
+    }
     initData();
   }, []);
+
+  const typingEnd = () => {
+    localStorage.removeItem("typingId");
+    setTypingId(-1);
+  };
   return (
     <>
-      <div className="p-6">
-        {dataList.map((item) => (
+      <div ref={divRef} className="p-6 overflow-y-auto h-[80vh]">
+        {chatList.reverse().map((item) => (
           <div key={item.id}>
             <div className="flex flex-col items-end px-5 py-4">
-              <div className="px-5 py-2.5 rounded-3xl bg-slate-100">{item.question}</div>
+              <div className="px-5 py-2.5 rounded-3xl bg-slate-100">
+                {item.question}
+              </div>
             </div>
-            <div className="px-5 py-4 text-base leading-7">{item.answer}</div>
+            {typingId === item.id ? (
+              <p className="px-5 py-4 text-base leading-7">
+                <TypeWrite text={item.answer} onTypingEnd={typingEnd} />
+              </p>
+            ) : (
+              <MarkdownReader text={item.answer} />
+            )}
           </div>
         ))}
       </div>

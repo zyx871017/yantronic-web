@@ -9,7 +9,6 @@ export async function POST(request: Request) {
   const body = await request.json();
   const Headers = request.headers;
   const { conversationId, question, answer } = body;
-  console.log(Headers.get("Authorization"));
   const resData = await serverRequest.post(
     "https://cxy.lianwo123.com/api/v1/conversation/question",
     { conversationId, question, answer },
@@ -20,7 +19,6 @@ export async function POST(request: Request) {
       },
     }
   );
-  console.log(resData);
   if (resData) {
     return NextResponse.json({
       msg: "success",

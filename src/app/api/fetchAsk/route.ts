@@ -8,14 +8,13 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { prompt } = body;
+  const { messages } = body;
   const resData: QuestionAnswerType = await serverRequest.post(
-    "http://61.135.204.124:8000/v1/completions",
+    "http://61.135.204.124:8000/v1/chat/completions",
     {
-      prompt,
+      messages,
       model: "Llama-3.1-70B-Instruct",
-      max_tokens: 512,
-      temperature: 0,
+      temperature: 0.7,
     },
     {
       headers: {
@@ -24,11 +23,12 @@ export async function POST(request: Request) {
       },
     }
   );
+  console.log(resData.choices[0]);
   if (resData.choices.length) {
     return NextResponse.json({
       msg: "success",
       code: 0,
-      answer: resData.choices[0].text,
+      answer: resData.choices[0].message.content,
     });
   } else {
     return NextResponse.json({ msg: JSON.stringify(resData), code: -1 });
