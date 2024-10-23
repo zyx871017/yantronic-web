@@ -9,8 +9,18 @@ import { remarkToSlate } from "remark-slate-transformer";
 import CodeElement from "./CodeElement";
 import Paragraph from "./Paragraph";
 import Heading from "./Heading";
+import RenderList from "./RenderList";
+import RenderTable from "./RenderTable";
+import RenderTableCell from "./RenderTableCell";
+interface ITableCons {
+  type: string;
+  children: ITableCons[];
+  align: string[] | string;
+  head?: boolean;
+}
 const markdownToSlate = (markdown: string): Descendant[] => {
-  const rootNode = unified()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rootNode: any = unified()
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkToSlate)
@@ -18,82 +28,65 @@ const markdownToSlate = (markdown: string): Descendant[] => {
   return rootNode as Descendant[];
 };
 
-const renderHeading = (data: {
-  depth: number;
-  children: { text: string }[];
-}) => {
-  switch (data.depth) {
-    case 1:
-      return (
-        <h1 className="text-4xl font-bold leading-snug mb-8 tracking-tighter">
-          {data.children[0].text}
-        </h1>
-      );
-    case 2:
-      return (
-        <h2 className="text-2xl font-semibold leading-snug mt-8 mb-4">
-          {data.children[0].text}
-        </h2>
-      );
-    case 3:
-      return (
-        <h3 className="text-xl font-semibold leading-snug mt-4 mb-2">
-          {data.children[0].text}
-        </h3>
-      );
-    case 4:
-      return (
-        <h4 className="text-base font-semibold leading-snug mt-4 mb-2">
-          {data.children[0].text}
-        </h4>
-      );
-    case 5:
-      return (
-        <h5 className="text-base font-semibold leading-relaxed">
-          {data.children[0].text}
-        </h5>
-      );
-    case 6:
-      return (
-        <h6 className="text-base leading-relaxed">{data.children[0].text}</h6>
-      );
-    default:
-      return (
-        <h4 className="text-lg font-semibold leading-snug mt-4 mb-2">
-          {data.children[0].text}
-        </h4>
-      );
+const formatElement = (node: ITableCons) => {
+  if (node.children && node.children.length > 0) {
+    const { children, align } = node;
+    children.forEach((row, ri) => {
+      if (ri === 0) {
+        row.head = true;
+        row.children.forEach((cell, ci) => {
+          cell.head = true;
+          cell.align = align[ci];
+        });
+      }
+      row.children.forEach((cell, ci) => {
+        cell.align = align[ci];
+      });
+    });
   }
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderElement = ({ element, children }: any) => {
   switch (element.type) {
     case "paragraph":
-      return <Paragraph objList={element.children} />;
-    case "ol_list":
-      return <ol className="mb-1">{children}</ol>;
+      return <Paragraph objList={element.children} child={children} />;
     case "listItem":
-      return <li>{children}</li>;
+      return <li className="pl-1.5 my-2">{children}</li>;
     case "heading":
       return <Heading data={element} />;
     case "code":
-      return <CodeElement>{children}</CodeElement>;
+      return <CodeElement element={element}>{children}</CodeElement>;
     case "list":
-      return <ul className="mb-1">{children}</ul>;
-    case "heading_three":
-      return <h3 className="mb-1">{children}</h3>;
+      return <RenderList element={element} child={children} />;
     case "table":
-      return (
-        <table>
-          <tbody>{children}</tbody>
-        </table>
-      );
+      formatElement(element);
+      return <RenderTable element={element} child={children} />;
     case "tableRow":
       return <tr>{children}</tr>;
     case "tableCell":
-      return <td>{children}</td>;
+      return <RenderTableCell element={element} child={children} />;
+    case "image":
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="max-w-[48rem]" src={element.url} alt={element.alt} />
+      );
+    case "link":
+      return (
+        <a href={element.url} className="text-link" title={element.title}>
+          {children}
+        </a>
+      );
+    case "blockquote":
+      return (
+        <blockquote className="border-l-2 border-quota-borders pl-4 py-2 font-semibold leading-tight">
+          {children}
+        </blockquote>
+      );
+    case "thematicBreak":
+      return <hr />;
     default:
-      console.log(element.type);
-      return <p className="mb-1">{children}</p>;
+      return <p>{children}</p>;
   }
 };
 const MarkdownRenderer = (props: { text: string }) => {
@@ -101,8 +94,7 @@ const MarkdownRenderer = (props: { text: string }) => {
   const initialValue = markdownToSlate(props.text);
   return (
     <Slate editor={editor} initialValue={initialValue}>
-      <div>{props.text}</div>
-      <Editable readOnly renderElement={renderElement} />
+      <Editable className="markdown" readOnly renderElement={renderElement} />
     </Slate>
   );
 };

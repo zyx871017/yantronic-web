@@ -4,11 +4,15 @@ interface IChildren {
   strong?: boolean;
   text: string;
 }
-const Paragraph = (props: { objList: IChildren[] }) => {
-  const { objList } = props;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Paragraph = (props: { objList: IChildren[]; child: any }) => {
+  const { objList, child } = props;
   return (
-    <p className="leading-8 mb-1">
+    <p className="leading-8">
       {objList.map((obj, index) => {
+        if (!obj.text) {
+          return child?.[index];
+        }
         if (obj.emphasis && obj.strong) {
           return (
             <span key={index}>
@@ -27,7 +31,10 @@ const Paragraph = (props: { objList: IChildren[] }) => {
         }
         if (obj.inlineCode) {
           return (
-            <code className="bg-slate-200 px-1 py-1 rounded-sm" key={index}>
+            <code
+              className="bg-main-surface-tertiary px-1 py-0.5 rounded-[0.25rem] text-sm font-medium"
+              key={index}
+            >
               {obj.text}
             </code>
           );

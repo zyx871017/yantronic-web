@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import micPng from "/public/img/mic.png";
 import askPng from "/public/img/ask.png";
 import { ChangeEvent, useState, KeyboardEvent } from "react";
 import { AiOutlineComment } from "react-icons/ai";
