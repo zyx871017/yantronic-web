@@ -36,9 +36,9 @@ export default function ChatDetail({ params }: { params: { id: string } }) {
         style={{ height: "calc(100vh - 132px)" }}
       >
         {chatList.reverse().map((item) => (
-          <div key={item.id}>
+          <div key={item.id} className="w-[48rem] mx-auto">
             <div className="flex flex-col items-end px-5 py-4">
-              <div className="px-5 py-2.5 rounded-3xl bg-slate-100">
+              <div className="px-5 py-2.5 rounded-3xl bg-main-surface-secondary">
                 {item.question}
               </div>
             </div>

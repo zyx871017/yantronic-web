@@ -9,8 +9,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        "text-primary": "var(--text-primary)",
         "text-secondary": "var(--text-secondary)",
         "text-tertiary": "var(--text-tertiary)",
+        "main-surface-primary": "var(--main-surface-primary)",
+        "main-surface-secondary": "var(--main-surface-secondary)",
+        "sidebar-surface-primary": "var(--sidebar-surface-primary)",
+        "sidebar-surface-secondary": "var(--sidebar-surface-secondary)",
         background: "var(--background)",
         foreground: "var(--foreground)",
         main: "#06f",

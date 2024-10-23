@@ -25,8 +25,8 @@ export default function SideMenu() {
             href={`/chat/${item.id}`}
             key={item.id}
             className={cls(
-              "text-black  rounded-lg px-2.5 py-1.5 text-sm cursor-pointer",
-              +id === item.id ? "bg-white" : ""
+              "rounded-lg px-2.5 py-1.5 text-sm cursor-pointer",
+              +id === item.id ? "bg-sidebar-surface-secondary" : ""
             )}
           >
             {item.title}

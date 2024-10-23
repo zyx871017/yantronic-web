@@ -3,6 +3,7 @@ import Image from "next/image";
 import micPng from "/public/img/mic.png";
 import askPng from "/public/img/ask.png";
 import { ChangeEvent, useState, KeyboardEvent } from "react";
+import { AiOutlineComment } from "react-icons/ai";
 import { message } from "antd";
 import { useLoading } from "@/contexts/LoadingContext";
 import { isLogin } from "@/utils";
@@ -68,14 +69,14 @@ export default function ChatInput(props: { id?: string }) {
     setIsLoading(false);
   };
   return (
-    <div className="border w-full rounded-2xl h-14 p-3 shadow-md flex gap-2.5">
+    <div className="bg-main-surface-secondary w-[48rem] mx-auto rounded-full h-14 p-3 shadow-md flex gap-2.5">
       <div className="size-8 flex items-center justify-center">
-        <Image src={micPng} alt="" className="size-6" />
+        <AiOutlineComment className="size-6" />
       </div>
       <input
         onChange={inputChange}
         onKeyDown={keyDown}
-        className="outline-none flex-1"
+        className="outline-none flex-1 bg-main-surface-secondary"
         placeholder="尽管来问我～"
       />
       <div

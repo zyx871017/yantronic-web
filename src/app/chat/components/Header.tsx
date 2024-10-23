@@ -33,8 +33,8 @@ const Header = () => {
       ? "/img/avatar.png"
       : localStorage.getItem("avatar") || "/img/avatar.png";
   return (
-    <div className="h-14 p-3 flex justify-between">
-      <div className="font-semibold text-2xl text-slate-500">言创大模型</div>
+    <div className="h-14 p-3 flex justify-between items-center">
+      <div className="font-semibold text-lg text-text-secondary">言创大模型</div>
       {hasLogin ? (
         <div className="cursor-pointer">
           <Dropdown menu={{ items, onClick: onDropClick }} trigger={["click"]}>

@@ -7,6 +7,8 @@ import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import { remarkToSlate } from "remark-slate-transformer";
 import CodeElement from "./CodeElement";
+import Paragraph from "./Paragraph";
+import Heading from "./Heading";
 const markdownToSlate = (markdown: string): Descendant[] => {
   const rootNode = unified()
     .use(remarkParse)
@@ -16,46 +18,63 @@ const markdownToSlate = (markdown: string): Descendant[] => {
   return rootNode as Descendant[];
 };
 
-interface IChildren {
-  inlineCode?: boolean;
-  strong?: boolean;
-  text: string;
-}
-const renderParagraph = (objList: IChildren[]) => {
-  return (
-    <p className="leading-8 mb-1">
-      {objList.map((obj, index) => {
-        if (obj.inlineCode) {
-          return (
-            <code className="bg-slate-200 px-1 py-1 rounded-sm" key={index}>
-              {obj.text}
-            </code>
-          );
-        }
-        if (obj.strong) {
-          return (
-            <strong key={index} className="font-semibold">
-              {obj.text}
-            </strong>
-          );
-        }
-        return obj.text;
-      })}
-    </p>
-  );
+const renderHeading = (data: {
+  depth: number;
+  children: { text: string }[];
+}) => {
+  switch (data.depth) {
+    case 1:
+      return (
+        <h1 className="text-4xl font-bold leading-snug mb-8 tracking-tighter">
+          {data.children[0].text}
+        </h1>
+      );
+    case 2:
+      return (
+        <h2 className="text-2xl font-semibold leading-snug mt-8 mb-4">
+          {data.children[0].text}
+        </h2>
+      );
+    case 3:
+      return (
+        <h3 className="text-xl font-semibold leading-snug mt-4 mb-2">
+          {data.children[0].text}
+        </h3>
+      );
+    case 4:
+      return (
+        <h4 className="text-base font-semibold leading-snug mt-4 mb-2">
+          {data.children[0].text}
+        </h4>
+      );
+    case 5:
+      return (
+        <h5 className="text-base font-semibold leading-relaxed">
+          {data.children[0].text}
+        </h5>
+      );
+    case 6:
+      return (
+        <h6 className="text-base leading-relaxed">{data.children[0].text}</h6>
+      );
+    default:
+      return (
+        <h4 className="text-lg font-semibold leading-snug mt-4 mb-2">
+          {data.children[0].text}
+        </h4>
+      );
+  }
 };
 const renderElement = ({ element, children }: any) => {
   switch (element.type) {
     case "paragraph":
-      return renderParagraph(element.children);
+      return <Paragraph objList={element.children} />;
     case "ol_list":
       return <ol className="mb-1">{children}</ol>;
     case "listItem":
       return <li>{children}</li>;
     case "heading":
-      return <h1 className="mb-1">{children}</h1>;
-    case "heading_four":
-      return <h4 className="mb-1">{children}</h4>;
+      return <Heading data={element} />;
     case "code":
       return <CodeElement>{children}</CodeElement>;
     case "list":
@@ -82,6 +101,7 @@ const MarkdownRenderer = (props: { text: string }) => {
   const initialValue = markdownToSlate(props.text);
   return (
     <Slate editor={editor} initialValue={initialValue}>
+      <div>{props.text}</div>
       <Editable readOnly renderElement={renderElement} />
     </Slate>
   );
