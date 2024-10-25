@@ -1,18 +1,19 @@
 "use client";
-import Image from "next/image";
-import askPng from "/public/img/ask.png";
-import { ChangeEvent, useState, KeyboardEvent } from "react";
+import { ChangeEvent, useState, KeyboardEvent, useEffect } from "react";
 import { AiOutlineComment } from "react-icons/ai";
-import { message } from "antd";
+import { BsArrowUpCircleFill } from "react-icons/bs";
+import { Tooltip } from "antd";
 import { useLoading } from "@/contexts/LoadingContext";
 import { isLogin } from "@/utils";
 import { useLoginOpen } from "@/contexts/LoginContext";
 import { askQuestion, saveChat } from "@/service/question";
 import { useRouter } from "next/navigation";
 import { useChatList } from "@/contexts/ChatContext";
+import classNames from "classnames";
 export default function ChatInput(props: { id?: string }) {
   const [inputValue, setInputValue] = useState("");
-  const { updateChatList, chatList } = useChatList();
+  const [isComposing, setIsComposing] = useState(false);
+  const { updateChatList, chatList, setChatList, setTypingId } = useChatList();
   const { setIsLoading } = useLoading();
   const { setLoginOpen } = useLoginOpen();
   const router = useRouter();
@@ -25,13 +26,22 @@ export default function ChatInput(props: { id?: string }) {
       fetchQuestion();
     }
   };
+
+  useEffect(() => {
+    if (!props.id) {
+      setChatList([]);
+    }
+  }, [props.id]);
+  // 确认提问
   const fetchQuestion = async () => {
+    if (isComposing) {
+      return;
+    }
     if (!isLogin()) {
       setLoginOpen(true);
       return;
     }
     if (!inputValue) {
-      message.error("您还没有向我提问");
       return;
     }
     setIsLoading(true);
@@ -54,12 +64,13 @@ export default function ChatInput(props: { id?: string }) {
             data: { conversationId, questionId },
           },
         } = saveRes;
-        localStorage.setItem("typingId", questionId + "");
+        setTypingId(questionId);
         if (props.id) {
           updateChatList();
         } else {
           router.push(`/chat/${conversationId}`);
         }
+        setInputValue("");
       }
     } catch (e) {
       console.log(e);
@@ -73,17 +84,27 @@ export default function ChatInput(props: { id?: string }) {
         <AiOutlineComment className="size-6" />
       </div>
       <input
+        value={inputValue}
         onChange={inputChange}
         onKeyDown={keyDown}
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={() => setIsComposing(false)}
         className="outline-none flex-1 bg-main-surface-secondary"
         placeholder="尽管来问我～"
       />
-      <div
-        onClick={fetchQuestion}
-        className="size-8 flex items-center justify-center cursor-pointer"
-      >
-        <Image src={askPng} alt="" className="size-8" />
-      </div>
+      <Tooltip title={inputValue ? null : "消息为空"}>
+        <div
+          onClick={fetchQuestion}
+          className="size-8 flex items-center justify-center cursor-pointer"
+        >
+          <BsArrowUpCircleFill
+            className={classNames([
+              "size-8",
+              inputValue ? "text-text-primary" : "text-text-tertiary",
+            ])}
+          />
+        </div>
+      </Tooltip>
     </div>
   );
 }

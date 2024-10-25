@@ -1,18 +1,24 @@
 "use client";
+import { useLayout } from "@/contexts/LayoutContext";
 import { useLoginOpen } from "@/contexts/LoginContext";
 import { fetchLogout } from "@/service/user";
 import { isLogin } from "@/utils";
 import { Button, Dropdown, MenuProps } from "antd";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { AiOutlineForm, AiOutlineMenuUnfold } from "react-icons/ai";
 
 const Header = () => {
   const { setLoginOpen } = useLoginOpen();
+  const [hasLogin, setHasLogin] = useState(false);
+  const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState("");
   const router = useRouter();
-  const hasLogin = isLogin();
-  const username = localStorage.getItem("username");
+  const { sideOpen, setSideOpen } = useLayout();
   const logout = async () => {
-    const res = await fetchLogout();
+    await fetchLogout();
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("avatar");
@@ -23,18 +29,40 @@ const Header = () => {
     { label: <span onClick={logout}>登出</span>, key: 1 },
   ];
   const onDropClick: MenuProps["onClick"] = ({ key }) => {
-    console.log(key);
     if (key === "1") {
       logout();
     }
   };
-  const avatar =
-    localStorage.getItem("avatar") === "null"
-      ? "/img/avatar.png"
-      : localStorage.getItem("avatar") || "/img/avatar.png";
+
+  useEffect(() => {
+    setHasLogin(isLogin());
+    const currentUsername = localStorage.getItem("username") || "";
+    setUsername(currentUsername);
+    const currentAvatar =
+      localStorage.getItem("avatar") === "null"
+        ? "/img/avatar.png"
+        : localStorage.getItem("avatar") || "/img/avatar.png";
+    setAvatar(currentAvatar);
+  }, []);
   return (
     <div className="h-14 p-3 flex justify-between items-center">
-      <div className="font-semibold text-lg text-text-secondary">言创大模型</div>
+      <div className="font-semibold text-lg text-text-secondary flex items-center">
+        {sideOpen ? null : (
+          <>
+            <Button
+              className="!px-2 !h-10 !border-none"
+              type="text"
+              onClick={() => setSideOpen(true)}
+            >
+              <AiOutlineMenuUnfold className="size-6 text-text-primary" />
+            </Button>
+            <Link href="/chat" className="!px-2" type="text">
+              <AiOutlineForm className="size-6 text-text-primary" />
+            </Link>
+          </>
+        )}
+        言创大模型
+      </div>
       {hasLogin ? (
         <div className="cursor-pointer">
           <Dropdown menu={{ items, onClick: onDropClick }} trigger={["click"]}>

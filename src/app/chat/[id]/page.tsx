@@ -1,33 +1,69 @@
 "use client";
 import ChatInput from "../components/ChatInput";
 import { useEffect, useRef, useState } from "react";
+import {
+  AiOutlineCopy,
+  AiOutlineDislike,
+  AiOutlineLike,
+  AiFillLike,
+  AiFillDislike,
+  AiOutlineCheck,
+} from "react-icons/ai";
 import TypeWrite from "../components/TypeWrite";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatList } from "@/contexts/ChatContext";
-import MarkdownReader from "../components/yanEditor/MarkdownReader";
+import MarkdownReader from "../components/Markdown/MarkdownReader";
+import { Button, Tooltip } from "antd";
+import CanvasPage from "../components/CanvasPage";
+import { useLayout } from "@/contexts/LayoutContext";
 
 export default function ChatDetail({ params }: { params: { id: string } }) {
-  const { updateChatList, chatList } = useChatList();
+  const { updateChatList, chatList, typingId, setTypingId } = useChatList();
+  const { setSideOpen } = useLayout();
   const { setIsLoading } = useLoading();
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [canvasMode, setCanvasMode] = useState(true);
   const divRef = useRef<HTMLDivElement>(null);
-  const [typingId, setTypingId] = useState(-1);
   const initData = async () => {
     setIsLoading(true);
     await updateChatList();
     setIsLoading(false);
+    if (divRef.current) {
+      divRef.current.scrollTop = divRef.current.scrollHeight;
+    }
   };
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const id = +(localStorage?.getItem("typingId") || -1);
-      setTypingId(id);
-    }
     initData();
+    setSideOpen(false);
   }, []);
+
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.scrollTop = divRef.current.scrollHeight;
+    }
+  }, [chatList]);
 
   const typingEnd = () => {
     localStorage.removeItem("typingId");
     setTypingId(-1);
   };
+  const copyText = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 2000);
+      })
+      .catch((e) => console.log(e));
+  };
+
+  if (canvasMode) {
+    return <CanvasPage />;
+  }
   return (
     <>
       <div
@@ -47,7 +83,58 @@ export default function ChatDetail({ params }: { params: { id: string } }) {
                 <TypeWrite text={item.answer} onTypingEnd={typingEnd} />
               </p>
             ) : (
-              <MarkdownReader text={item.answer} />
+              <div className="group relative mb-10">
+                <MarkdownReader text={item.answer} />
+                <div className="absolute w-full h-10 -bottom-10 hidden group-hover:block">
+                  {copied ? (
+                    <Tooltip title="复制" placement="bottom">
+                      <Button className="!px-1" type="text">
+                        <AiOutlineCheck className="size-5 text-text-secondary" />
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="复制" placement="bottom">
+                      <Button
+                        className="!px-1"
+                        type="text"
+                        onClick={() => copyText(item.answer)}
+                      >
+                        <AiOutlineCopy className="size-5 text-text-secondary" />
+                      </Button>
+                    </Tooltip>
+                  )}
+                  {disliked ? null : (
+                    <Tooltip title="最佳回复" placement="bottom">
+                      <Button
+                        className="!px-1"
+                        type="text"
+                        onClick={() => setLiked(true)}
+                      >
+                        {liked ? (
+                          <AiFillLike className="size-5 text-text-secondary" />
+                        ) : (
+                          <AiOutlineLike className="size-5 text-text-secondary" />
+                        )}
+                      </Button>
+                    </Tooltip>
+                  )}
+                  {liked ? null : (
+                    <Tooltip title="错误回复" placement="bottom">
+                      <Button
+                        className="!px-1"
+                        type="text"
+                        onClick={() => setDisliked(true)}
+                      >
+                        {disliked ? (
+                          <AiFillDislike className="size-5 text-text-secondary" />
+                        ) : (
+                          <AiOutlineDislike className="size-5 text-text-secondary" />
+                        )}
+                      </Button>
+                    </Tooltip>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         ))}

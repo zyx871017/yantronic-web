@@ -29,20 +29,24 @@ const markdownToSlate = (markdown: string): Descendant[] => {
 };
 
 const formatElement = (node: ITableCons) => {
-  if (node.children && node.children.length > 0) {
-    const { children, align } = node;
-    children.forEach((row, ri) => {
-      if (ri === 0) {
-        row.head = true;
+  try {
+    if (node.children && node.children.length > 0) {
+      const { children, align } = node;
+      children.forEach((row, ri) => {
+        if (ri === 0 && row) {
+          row.head = true;
+          row.children.forEach((cell, ci) => {
+            cell.head = true;
+            cell.align = align[ci];
+          });
+        }
         row.children.forEach((cell, ci) => {
-          cell.head = true;
           cell.align = align[ci];
         });
-      }
-      row.children.forEach((cell, ci) => {
-        cell.align = align[ci];
       });
-    });
+    }
+  } catch (e) {
+    console.log(e);
   }
 };
 
@@ -94,7 +98,7 @@ const MarkdownRenderer = (props: { text: string }) => {
   const initialValue = markdownToSlate(props.text);
   return (
     <Slate editor={editor} initialValue={initialValue}>
-      <Editable className="markdown" readOnly renderElement={renderElement} />
+      <Editable className="markdown" renderElement={renderElement} />
     </Slate>
   );
 };

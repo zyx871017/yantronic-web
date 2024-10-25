@@ -1,3 +1,4 @@
+import { IResponse } from "@/types";
 import clientRequest from "./clientRequest";
 import { ChatItemType, QuestionAnswerType } from "@/types/question";
 
@@ -53,4 +54,10 @@ export async function saveChat(data: {
   answer: string;
 }): Promise<ISaveChatRes> {
   return clientRequest.post("/api/saveChat", data);
+}
+
+export async function deleteConversation(data: {
+  conversationId: number;
+}): Promise<IResponse> {
+  return clientRequest.post("/api/deleteConversation", data);
 }

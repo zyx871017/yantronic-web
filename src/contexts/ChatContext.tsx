@@ -9,6 +9,8 @@ interface ChatContextProps {
   chatList: ChatItemType[];
   setChatList: (list: ChatItemType[]) => void;
   updateChatList: () => void;
+  typingId: number;
+  setTypingId: (v: number) => void;
   queryMore: () => void;
 }
 
@@ -19,9 +21,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [chatList, setChatList] = useState<ChatItemType[]>([]);
   const [hasMore, setHasMore] = useState(true);
+  const [typingId, setTypingId] = useState(-1);
   const [currentPage, setCurrentPage] = useState(1);
   const { setIsLoading } = useLoading();
   const { id } = useParams();
+
   const updateChatList = async () => {
     setIsLoading(true);
     const res = await getChatDetail({
@@ -55,7 +59,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <ChatContext.Provider
-      value={{ chatList, setChatList, updateChatList, queryMore }}
+      value={{
+        chatList,
+        setChatList,
+        updateChatList,
+        queryMore,
+        typingId,
+        setTypingId,
+      }}
     >
       {children}
     </ChatContext.Provider>

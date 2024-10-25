@@ -1,5 +1,4 @@
 import serverRequest from "@/service/serverRequest";
-import { QuestionAnswerType } from "@/types/question";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -8,26 +7,23 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { messages } = body;
-  const resData: QuestionAnswerType = await serverRequest.post(
-    "http://61.135.204.124:8000/v1/chat/completions",
-    {
-      messages,
-      model: "Llama-3.1-70B-Instruct",
-      temperature: 0.7,
-    },
+  const Headers = request.headers;
+  const { conversationId } = body;
+  const resData = await serverRequest.post(
+    "https://cxy.lianwo123.com/api/v1/conversation/delete",
+    { conversationId },
     {
       headers: {
-        Authorization: "Bearer yc_70btest",
         "Content-Type": "application/json",
+        Authorization: Headers.get("Authorization"),
       },
     }
   );
-  if (resData.choices.length) {
+  if (resData) {
     return NextResponse.json({
       msg: "success",
       code: 0,
-      answer: resData.choices[0].message.content,
+      answer: resData,
     });
   } else {
     return NextResponse.json({ msg: JSON.stringify(resData), code: -1 });

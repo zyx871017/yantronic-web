@@ -375,6 +375,9 @@ body {
 
 * {
   scrollbar-color: #181818 transparent;
+  transition-property: none;
+  transition-duration: .5s !important;
+  transition-timing-function: ease-in;
 }
 
 .markdown table {
