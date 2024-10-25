@@ -24,7 +24,7 @@ export default function ChatDetail({ params }: { params: { id: string } }) {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [canvasMode, setCanvasMode] = useState(true);
+  const [canvasMode, setCanvasMode] = useState(false);
   const divRef = useRef<HTMLDivElement>(null);
   const initData = async () => {
     setIsLoading(true);
@@ -36,7 +36,6 @@ export default function ChatDetail({ params }: { params: { id: string } }) {
   };
   useEffect(() => {
     initData();
-    setSideOpen(false);
   }, []);
 
   useEffect(() => {

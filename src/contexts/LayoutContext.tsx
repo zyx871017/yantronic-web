@@ -12,6 +12,7 @@ export const LayoutProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [sideOpen, setSideOpen] = useState(true);
+  const [canvasMode, setCanvasMode] = useState(false);
 
   return (
     <LayoutContext.Provider value={{ sideOpen, setSideOpen }}>
