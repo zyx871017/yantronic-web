@@ -1,10 +1,27 @@
 "use client";
-import { useRef, useState, MouseEvent } from "react";
+import { useRef, useState, MouseEvent, useEffect } from "react";
+import LeftContent from "./LeftContent";
+import { useChatList } from "@/contexts/ChatContext";
+import { useLoading } from "@/contexts/LoadingContext";
+import RightContent from "./RightContent";
 
 const CanvasPage = () => {
-  const [leftWidth, setLeftWidth] = useState(300);
+  const [leftWidth, setLeftWidth] = useState(400);
+  const { updateChatList } = useChatList();
+  const { setIsLoading } = useLoading();
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+
+  const initData = async () => {
+    setIsLoading(true);
+    await updateChatList();
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    initData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleMouseDown = () => {
     isDragging.current = true;
@@ -29,12 +46,16 @@ const CanvasPage = () => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      <div style={{ width: leftWidth }}>Left Content</div>
+      <div style={{ width: leftWidth }} className="relative flex-shrink-0">
+        <LeftContent />
+      </div>
       <div
         className="h-full border-l-[4px] border-main-surface-tertiary cursor-col-resize"
         onMouseDown={handleMouseDown}
       ></div>
-      <div>Right Content</div>
+      <div className="flex-1 bg-main-surface-secondary">
+        <RightContent />
+      </div>
     </div>
   );
 };

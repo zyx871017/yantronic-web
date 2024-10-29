@@ -73,7 +73,7 @@ const renderElement = ({ element, children }: any) => {
     case "image":
       return (
         // eslint-disable-next-line @next/next/no-img-element
-        <img className="max-w-[48rem]" src={element.url} alt={element.alt} />
+        <img className="max-w-[48rem] w-full" src={element.url} alt={element.alt} />
       );
     case "link":
       return (

@@ -79,7 +79,7 @@ export default function ChatInput(props: { id?: string }) {
     setIsLoading(false);
   };
   return (
-    <div className="bg-main-surface-secondary w-[48rem] mx-auto rounded-full h-14 p-3 shadow-md flex gap-2.5">
+    <div className="bg-main-surface-secondary max-w-[48rem] mx-auto rounded-full h-14 p-3 shadow-md flex gap-2.5">
       <div className="size-8 flex items-center justify-center">
         <AiOutlineComment className="size-6" />
       </div>

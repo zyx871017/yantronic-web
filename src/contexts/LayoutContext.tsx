@@ -3,7 +3,9 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 
 interface LayoutContextProps {
   sideOpen: boolean;
-  setSideOpen: (loading: boolean) => void;
+  setSideOpen: (open: boolean) => void;
+  canvasMode: boolean;
+  setCanvasMode: (v: boolean) => void;
 }
 
 const LayoutContext = createContext<LayoutContextProps | undefined>(undefined);
@@ -11,11 +13,13 @@ const LayoutContext = createContext<LayoutContextProps | undefined>(undefined);
 export const LayoutProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [sideOpen, setSideOpen] = useState(true);
-  const [canvasMode, setCanvasMode] = useState(false);
+  const [sideOpen, setSideOpen] = useState(false);
+  const [canvasMode, setCanvasMode] = useState(true);
 
   return (
-    <LayoutContext.Provider value={{ sideOpen, setSideOpen }}>
+    <LayoutContext.Provider
+      value={{ sideOpen, setSideOpen, canvasMode, setCanvasMode }}
+    >
       {children}
     </LayoutContext.Provider>
   );

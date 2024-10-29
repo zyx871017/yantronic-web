@@ -1,12 +1,15 @@
 "use client";
 import { ReactNode } from "react";
-import Header from "./Header";
+import Header from "../../components/Header";
 import { useLayout } from "@/contexts/LayoutContext";
-import SideMenu from "./SideMenu";
+import SideMenu from "../../components/SideMenu";
+import CanvasPage from "./CanvasPage";
 
 const MainContent: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { sideOpen } = useLayout();
-
+  const { sideOpen, canvasMode } = useLayout();
+  if (canvasMode) {
+    return <CanvasPage></CanvasPage>;
+  }
   return (
     <div className="w-full h-full flex relative">
       <SideMenu />

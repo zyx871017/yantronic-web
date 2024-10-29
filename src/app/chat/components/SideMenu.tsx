@@ -2,6 +2,7 @@
 import { useLayout } from "@/contexts/LayoutContext";
 import { deleteConversation, getHistoryList } from "@/service/question";
 import { QuestionItemType } from "@/types/question";
+import { isLogin } from "@/utils";
 import { Button, Dropdown, MenuProps, Tooltip } from "antd";
 import cls from "classnames";
 import Link from "next/link";
@@ -96,7 +97,9 @@ export default function SideMenu() {
     setDataList(data.items);
   };
   useEffect(() => {
-    getData();
+    if (isLogin()) {
+      getData();
+    }
   }, [id]);
 
   return (
