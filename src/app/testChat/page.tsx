@@ -1,31 +1,9 @@
-import TypingEffect from "./components/TypingEffect";
-const markdownContent = `
-# 欢迎来到打字机效果演示
-
-这段文字将逐字显示，模拟打字机的效果。它包含普通文本段落和代码块。
-
-- 支持 **加粗**、*斜体* 和其他 Markdown 语法。
-- 适用于展示需要逐渐呈现的内容。
-
-## 示例代码段
-
-下面是一个代码块示例，包含 JavaScript 代码：
-
-\`\`\`javascript
-function greet(name) {
-  console.log('Hello, ' + name + '!');
-}
-
-greet('World');
-\`\`\`
-
-还有一些普通文本来说明代码的用途。
-
-### 演示完毕
-`;
+import TypingEffect from "./components/TypingEffect.tsx";
+const markdownContent =
+  "# 欢迎来到打字机效果演示\n支持 **这是一段加粗字体**、*斜体*和其他`Markdown`语法\n这段文字将**逐字**显示`Markdown`，`text`模拟打字机的效果。它包含普通文本段落和代码块。\n- 支持**加粗**、***斜体***和其他`Markdown`语法。\n- 适用于展示需要逐渐呈现的内容。\n## 示例代码段\n下面是一个代码块示例，包含 JavaScript 代码：\n```javascript\nfunction greet(name) {\n console.log('Hello, ' + name + '!');\n}\ngreet('World');\n```\n还有一些普通文本来说明代码的用途。\n### 图片\n![Markdown Logo](https://markdown-here.com/img/icon256.png)\n\n## 7. 表格\n| 标题一  | 标题二  | 标题三  |\n| ------- | ------- | ------- |\n| 内容 1  | 内容 2  | 内容 3  |\n| 内容 4  | 内容 5  | 内容 6  |\n| 内容 7  | 内容 8  | 内容 9  |\n\n中国近五年的生育率数据如下：\n\n| 年份 | 总生育率（每1,000人） | 总和生育率（每个妇女生育孩子数量） |\n| --- | --- | --- |\n| 2018 | 10.94 | 1.62 |\n| 2019 | 10.48 | 1.60 |\n| 2020 | 8.52 | 1.30 |\n| 2021 | 7.52 | 1.16 |\n| 2022 | 6.77 | 1.07 |\n\n生育率的定义与前面相同。\n\n从数据中可以看出以下几点：\n\n1.  **生育率大幅下降**：总生育率和总和生育率在2018年至2022年期间大幅下降。\n2.  **降低幅度**：总生育率在五年内下降了38.0%，总和生育率下降了34.0%。这表明生育率的下降幅度相对较大，说明生育率的下降速度相对较快。\n3.  **趋势不稳定**：生育率的下降趋势相对不稳定，尤其是2020年之后，生育率下降速度加快。\n4.  **可能原因**：生育率下降可能与多种因素有关，如人口老龄化、城市化、教育和职业机会、女性地位的提高等。\n\n与美国相比，中国的生育率下降速度更快，幅度更大。\n### 演示完毕";
 export default function Home() {
   return (
-    <div className="px-5">
+    <div className="markdown px-5">
       <TypingEffect text={markdownContent} speed={50} />
     </div>
   );

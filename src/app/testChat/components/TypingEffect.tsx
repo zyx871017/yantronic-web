@@ -1,11 +1,16 @@
-// Add the "use client" directive at the top of the file
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { ComponentPropsWithoutRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ComponentPropsWithoutRef,
+} from "react";
 import ReactMarkdown from "react-markdown";
-import { AiOutlineCopy, AiOutlineCheck } from "react-icons/ai";
+import remarkGfm from "remark-gfm";
 import hljs from "highlight.js";
-
+import CopyCodeButton from "./CopyCodeButton";
+import Heading from "../../chat/components/Markdown/Heading";
 import "highlight.js/styles/github.css"; // 使用 highlight.js 的 GitHub 样式（浅色主题）
 
 interface TypingEffectProps {
@@ -13,59 +18,215 @@ interface TypingEffectProps {
   speed?: number;
 }
 
-const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 100 }) => {
+const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50 }) => {
   const [displayedText, setDisplayedText] = useState<string>("");
-  const [index, setIndex] = useState<number>(0);
-  const [copied, setCopied] = useState<boolean>(false);
-  const [buffer, setBuffer] = useState(""); // 用于存储暂时不输出的反引号字符
-  const codeRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  const [isInCodeBlock, setIsInCodeBlock] = useState<boolean>(false);
+  const codeRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (index < text.length) {
-      const timeout = setTimeout(() => {
-        const currentChar = text[index];
-
-        // 检查当前字符是否为反引号
-        if (currentChar === "`") {
-          // 将反引号暂存在缓冲区中
-          setBuffer((prevBuffer) => prevBuffer + currentChar);
-        } else {
-          // 如果缓冲区中有反引号，先将其输出
-          if (buffer.length > 0) {
-            setDisplayedText((prev) => prev + buffer + currentChar);
-            setBuffer(""); // 清空缓冲区
-          } else {
-            // 否则直接输出当前字符
-            setDisplayedText((prev) => prev + currentChar);
+    if (currentIndex >= text.length) return;
+    // 定义所有需要处理的 Markdown 标记
+    const inlineMarkers = [
+      { marker: "`", type: "inlineCode" },
+      { marker: "**", type: "bold" },
+      { marker: "__", type: "bold" },
+      { marker: "*", type: "italic" },
+      { marker: "_", type: "italic" },
+    ];
+    // 辅助函数：检测并提取内联格式标记
+    const handleInlineFormatting = (
+      text: string,
+      currentIndex: number
+    ): { extractedText: string | null; newIndex: number } => {
+      for (const { marker } of inlineMarkers) {
+        if (text.substr(currentIndex, marker.length) === marker) {
+          const endIndex = text.indexOf(marker, currentIndex + marker.length);
+          if (endIndex !== -1) {
+            const extractedText = text.substring(
+              currentIndex,
+              endIndex + marker.length
+            );
+            return { extractedText, newIndex: endIndex + marker.length };
           }
         }
+      }
+      return { extractedText: null, newIndex: currentIndex };
+    };
+    const timeout = setTimeout(() => {
+      const char = text[currentIndex];
 
-        setIndex(index + 1);
-      }, speed);
+      // 优先判断是否为代码块 (```)
+      if (text.substr(currentIndex, 3) === "```") {
+        if (!isInCodeBlock) {
+          // 开始代码块
+          setIsInCodeBlock(true);
+          setDisplayedText((prev) => prev + "```");
+          setCurrentIndex(currentIndex + 3);
 
-      return () => clearTimeout(timeout);
-    }
-  }, [index, text, speed, buffer]);
+          // 提取语言（可选）
+          const languageMatch = text
+            .substring(currentIndex + 3)
+            .match(/^(\w+)/);
+          if (languageMatch) {
+            const language = languageMatch[1];
+            setDisplayedText((prev) => prev + `${language}\n`);
+            setCurrentIndex(currentIndex + 3 + language.length + 1); // +1 为换行符
+          }
+        } else {
+          // 结束代码块
+          setIsInCodeBlock(false);
+          setDisplayedText((prev) => prev + "```\n");
+          setCurrentIndex(currentIndex + 3);
+        }
+        return;
+      }
+
+      // 处理粗体、斜体和内联代码
+      if (!isInCodeBlock) {
+        const { extractedText, newIndex } = handleInlineFormatting(
+          text,
+          currentIndex
+        );
+        if (extractedText) {
+          setDisplayedText((prev) => prev + extractedText);
+          setCurrentIndex(newIndex);
+          return;
+        }
+      }
+
+      // Handle Images (![alt](url))
+      if (
+        !isInCodeBlock &&
+        char === "!" &&
+        text.substr(currentIndex, 2) === "![" // 检查是否为图片格式
+      ) {
+        const endIndex = text.indexOf(")", currentIndex);
+        if (endIndex !== -1) {
+          const imageMarkdown = text.substring(currentIndex, endIndex + 1);
+          setDisplayedText((prev) => prev + imageMarkdown);
+          setCurrentIndex(endIndex + 1);
+          return;
+        }
+      }
+
+      // Handle Lists (- item)
+      if (!isInCodeBlock && char === "-" && text[currentIndex + 1] === " ") {
+        const endIndex = text.indexOf("\n", currentIndex);
+        if (endIndex !== -1) {
+          const listItem = text.substring(currentIndex, endIndex + 1);
+          setDisplayedText((prev) => prev + listItem);
+          setCurrentIndex(endIndex + 1);
+          return;
+        }
+      }
+
+      // Handle Tables (| cell | cell | cell |)
+      if (!isInCodeBlock && char === "|") {
+        const endIndex = text.indexOf("\n", currentIndex);
+        if (endIndex !== -1) {
+          const tableRow = text.substring(currentIndex, endIndex + 1);
+          setDisplayedText((prev) => prev + tableRow);
+          setCurrentIndex(endIndex + 1);
+          return;
+        }
+      }
+
+      // Handle Headers (#, ##, ###, etc.)
+      if (!isInCodeBlock && char === "#") {
+        const headerMatch = text.substring(currentIndex).match(/^(#{1,6})\s+/);
+        if (headerMatch) {
+          const headerPrefixLength = headerMatch[0].length;
+          setDisplayedText((prev) => prev + headerMatch[1] + " ");
+          setCurrentIndex(currentIndex + headerPrefixLength);
+          return;
+        }
+      }
+
+      // Default: Add one character
+      setDisplayedText((prev) => prev + char);
+      setCurrentIndex(currentIndex + 1);
+    }, speed);
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, text, speed, isInCodeBlock]);
 
   useEffect(() => {
     if (codeRef.current) {
       hljs.highlightElement(codeRef.current);
     }
-  }, [displayedText, copied]);
+  }, [displayedText]);
 
-  // 处理复制代码的逻辑
-  const copyCode = (code: string) => {
-    navigator.clipboard.writeText(code).then(() => {
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 2000);
-    });
+  // 动态生成 h1 到 h6 的组件映射
+  const headingLevels = [1, 2, 3, 4, 5, 6];
+  const componentsMap = headingLevels.reduce((acc, level) => {
+    acc[`h${level}`] = ({ children, ...props }) => (
+      <Heading
+        data={{
+          depth: level,
+          children: [
+            {
+              text: children ? String(children) : "",
+            },
+          ],
+        }}
+        {...props}
+      />
+    );
+    return acc;
+  }, {} as Record<string, React.FC<any>>);
+  const renderChild = (node: any) => {
+    if (node.type === "element") {
+      const { tagName, children } = node;
+      const nestedContent = children.map(renderChild); // 递归处理子节点
+      // 根据 tagName 返回带有子节点的相应元素
+      switch (tagName) {
+        case "strong":
+          return <strong>{nestedContent}</strong>;
+        case "em":
+          return <em>{nestedContent}</em>;
+        case "code":
+          return (
+            <code className="bg-main-surface-tertiary px-1 py-0.5 rounded-[0.25rem] text-sm font-medium">
+              {nestedContent}
+            </code>
+          );
+        default:
+          return <span>{nestedContent}</span>; // 处理其他未知标签
+      }
+    } else {
+      // 如果节点不是元素，直接返回文本值
+      return node?.value;
+    }
   };
-
   return (
     <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
       components={{
+        // 动态生成的头部组件
+        ...componentsMap,
+        img: ({ src, alt, ...props }) => (
+          <img src={src} alt={alt} className="max-w-[48rem]" {...props} />
+        ),
+        ul: ({ children, ...props }) => (
+          <ul className="list-decimal pl-[26px]" {...props}>
+            {children}
+          </ul>
+        ),
+        li: ({ ...props }) => {
+          const result = props.node?.children.map(renderChild);
+          return <li className="pl-1.5 my-2">{result}</li>;
+        },
+        ol: ({ children, ...props }) => (
+          <ol className="list-disc pl-[26px]" {...props}>
+            {children}
+          </ol>
+        ),
+        p: ({ ...props }) => {
+          const result = props.node?.children.map(renderChild);
+          return <p className="leading-8">{result}</p>;
+        },
         code({
           inline,
           className,
@@ -77,35 +238,13 @@ const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 100 }) => {
           const match = /language-(\w+)/.exec(className || "");
           const language = match ? match[1] : "";
 
-          // 如果 children 为空或 undefined，直接使用空字符串
           let codeContent = children ? String(children).replace(/\n$/, "") : "";
-          // 去除开头和结尾的反引号符号（如 ``` 或 ``）
-          if (codeContent.startsWith("```") || codeContent.startsWith("`")) {
-            codeContent = codeContent.replace(/^`+|`+$/g, "");
-          }
+          codeContent = codeContent.replace(/^`+|`+$/g, "");
+
           return !inline && match ? (
             <div className="border-[0.5px] border-token-border-medium rounded-md overflow-hidden">
-              {/* 顶部语言标签和复制按钮 */}
-              <div className="bg-main-surface-secondary text-text-secondary px-4 py-2 flex justify-between h-9">
-                <span className="text-sm">{language}</span>
-                {copied ? (
-                  <div className="flex items-center gap-0.5 cursor-pointer">
-                    <AiOutlineCheck />
-                    <span className="text-sm">已复制</span>
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => copyCode(codeContent)}
-                    className="flex items-center gap-0.5 cursor-pointer"
-                  >
-                    <AiOutlineCopy />
-                    <span className="text-sm">复制代码</span>
-                  </div>
-                )}
-              </div>
-
-              {/* 代码块 */}
-              <pre>
+              <CopyCodeButton language={language} content={codeContent} />
+              <pre className="cai-code">
                 <code
                   ref={codeRef}
                   className={`hljs language-${language}`}
