@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, {
@@ -176,21 +177,35 @@ const TypingEffect: React.FC<TypingEffectProps> = ({ text, speed = 50 }) => {
     );
     return acc;
   }, {} as Record<string, React.FC<any>>);
-  const renderChild = (node: any) => {
+  const renderChild = (node: any, index: number) => {
     if (node.type === "element") {
-      const { tagName, children } = node;
-      const nestedContent = children.map(renderChild); // 递归处理子节点
+      const { tagName, children, properties } = node;
+      const nestedContent = children.map((child: any, childIndex: number) =>
+        renderChild(child, childIndex)
+      ); // 递归处理子节点
       // 根据 tagName 返回带有子节点的相应元素
       switch (tagName) {
         case "strong":
-          return <strong>{nestedContent}</strong>;
+          return <strong key={index}>{nestedContent}</strong>;
         case "em":
-          return <em>{nestedContent}</em>;
+          return <em key={index}>{nestedContent}</em>;
         case "code":
           return (
-            <code className="bg-main-surface-tertiary px-1 py-0.5 rounded-[0.25rem] text-sm font-medium">
+            <code
+              key={index}
+              className="bg-main-surface-tertiary px-1 py-0.5 rounded-[0.25rem] text-sm font-medium"
+            >
               {nestedContent}
             </code>
+          );
+        case "img":
+          return (
+            <img
+              key={index}
+              src={properties?.src}
+              alt={properties?.alt || ""}
+              className="max-w-[48rem]"
+            />
           );
         default:
           return <span>{nestedContent}</span>; // 处理其他未知标签
