@@ -42,5 +42,16 @@ export async function GET(request: Request) {
 }
 
 export async function POST() {
+  const resData = await serverRequest.post(
+    "http://localhost:3001/sentry/webhook",
+    {
+      url: "url",
+      event: {
+        title: "title",
+        request: { url: "clientUrl" },
+      },
+    }
+  );
+  console.log(resData);
   return NextResponse.json({ message: "Hello from API Route!" });
 }

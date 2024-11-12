@@ -3,8 +3,9 @@ import { useEffect, useRef, MouseEvent, useState } from "react";
 import { AiOutlineClose, AiOutlinePlusCircle } from "react-icons/ai";
 import { EditorView, basicSetup } from "codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { Input, Popover } from "antd";
+import { Button, Input, Popover } from "antd";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { testSentry } from "@/service/question";
 
 const RightContent = () => {
   const domRef = useRef<HTMLDivElement>(null);
@@ -60,6 +61,7 @@ const RightContent = () => {
           </span>
         </div>
       </div>
+      <Button onClick={() => testSentry()}>test sentry</Button>
       <div
         className="codemirror-content flex-1 h-[calc(100vh-56px)] overflow-y-auto pb-[50vh]"
         ref={domRef}

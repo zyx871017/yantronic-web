@@ -1,16 +1,13 @@
 "use client";
 import ChatInput from "../components/ChatInput";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import TypeWrite from "../components/TypeWrite";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatList } from "@/contexts/ChatContext";
-import CanvasPage from "./components/CanvasPage";
-import { useLayout } from "@/contexts/LayoutContext";
 import ChatListItem from "../components/ChatListItem";
 
 export default function ChatDetail({ params }: { params: { id: string } }) {
   const { updateChatList, chatList, typingId, setTypingId } = useChatList();
-  const { setSideOpen, canvasMode, setCanvasMode } = useLayout();
   const { setIsLoading } = useLoading();
   const divRef = useRef<HTMLDivElement>(null);
   const initData = async () => {

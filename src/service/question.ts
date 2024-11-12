@@ -1,6 +1,6 @@
 import { IResponse } from "@/types";
 import clientRequest from "./clientRequest";
-import { ChatItemType, QuestionAnswerType } from "@/types/question";
+import { ChatItemType } from "@/types/question";
 
 export async function getHistoryList(params: {
   page: number;
@@ -60,4 +60,8 @@ export async function deleteConversation(data: {
   conversationId: number;
 }): Promise<IResponse> {
   return clientRequest.post("/api/deleteConversation", data);
+}
+
+export async function testSentry() {
+  return clientRequest.post("/api/getChatList");
 }

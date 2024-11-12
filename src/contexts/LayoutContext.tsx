@@ -13,8 +13,8 @@ const LayoutContext = createContext<LayoutContextProps | undefined>(undefined);
 export const LayoutProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [sideOpen, setSideOpen] = useState(false);
-  const [canvasMode, setCanvasMode] = useState(true);
+  const [sideOpen, setSideOpen] = useState(true);
+  const [canvasMode, setCanvasMode] = useState(false);
 
   return (
     <LayoutContext.Provider
