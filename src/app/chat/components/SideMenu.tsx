@@ -3,7 +3,7 @@ import { useLayout } from "@/contexts/LayoutContext";
 import { deleteConversation, getHistoryList } from "@/service/question";
 import { QuestionItemType } from "@/types/question";
 import { isLogin } from "@/utils";
-import { Button, Dropdown, MenuProps, Tooltip } from "antd";
+import { Button, Dropdown, MenuProps } from "antd";
 import cls from "classnames";
 import Link from "next/link";
 import { useParams } from "next/navigation";

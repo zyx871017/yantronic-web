@@ -1,4 +1,3 @@
-import { getVerifyCode } from "@/service/user";
 import { NextResponse } from "next/server";
 import serverRequest from "@/service/serverRequest";
 
