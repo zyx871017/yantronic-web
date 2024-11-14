@@ -27,7 +27,7 @@ function MenuItem(props: IMenuItemProps) {
   const deleteQuestion = async (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     try {
-      await deleteConversation({ conversationId: item.id });
+      await deleteConversation({ conversationId: item.conversationId });
       onDelete();
     } catch (e) {
       console.log(e);
@@ -54,18 +54,18 @@ function MenuItem(props: IMenuItemProps) {
   ];
   return (
     <Link
-      href={`/chat/${item.id}`}
-      key={item.id}
+      href={`/chat/${item.conversationId}`}
+      key={item.conversationId}
       className={cls(
         "rounded-lg px-2.5 py-1.5 text-sm cursor-pointer group",
         "text-nowrap",
         "overflow-hidden",
         "relative",
         "hover:bg-sidebar-surface-secondary",
-        +id === item.id ? "bg-sidebar-surface-secondary" : ""
+        +id === item.conversationId ? "bg-sidebar-surface-secondary" : ""
       )}
     >
-      {item.title}
+      {item.question}
       <div className="absolute bottom-0 top-0 right-0 w-10 bg-gradient-to-l from-60% to-transparent from-sidebar-surface-primary group-hover:from-sidebar-surface-secondary"></div>
       <Dropdown
         menu={{
@@ -77,7 +77,7 @@ function MenuItem(props: IMenuItemProps) {
         <span
           className={cls(
             "absolute px-1 bottom-0 top-0 right-0 w-8 group-hover:flex items-center justify-end bg-sidebar-surface-secondary",
-            +id === item.id ? "flex" : "hidden"
+            +id === item.conversationId ? "flex" : "hidden"
           )}
           onClick={(e) => e.preventDefault()}
         >
@@ -126,7 +126,11 @@ export default function SideMenu() {
       <div className="px-3 flex flex-col gap-[2px] flex-1 overflow-y-auto">
         {dataList.map((item) => {
           return (
-            <MenuItem key={item.id} onDelete={() => getData()} item={item} />
+            <MenuItem
+              key={item.conversationId}
+              onDelete={() => getData()}
+              item={item}
+            />
           );
         })}
       </div>

@@ -7,8 +7,8 @@ export type ChatItemType = {
 };
 
 export type QuestionItemType = {
-  title: string;
-  id: number;
+  question: string;
+  conversationId: number;
   children: ChatItemType[];
 };
 

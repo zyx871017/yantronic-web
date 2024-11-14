@@ -10,11 +10,12 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { messages } = body;
   const resData: QuestionAnswerType = await serverRequest.post(
-    "http://61.135.204.124:8000/v1/chat/completions",
+    "http://61.135.204.107:9997/v1/chat/completions",
     {
       messages,
-      model: "Llama-3.1-70B-Instruct",
+      model: "yantronic",
       temperature: 0.7,
+      max_tokens: 512,
     },
     {
       headers: {
@@ -23,6 +24,7 @@ export async function POST(request: Request) {
       },
     }
   );
+  console.log(resData);
   if (resData.choices.length) {
     return NextResponse.json({
       msg: "success",
