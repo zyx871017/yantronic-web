@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { messages } = body;
   const resData: QuestionAnswerType = await serverRequest.post(
-    "http://61.135.204.107:9997/v1/chat/completions",
+    "http://61.135.204.110:9997/v1/chat/completions",
     {
       messages,
       model: "yantronic",
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     },
     {
       headers: {
-        Authorization: "Bearer yc_70btest",
+        Authorization: "Bearer sk-ycd3516Cf7cG1",
         "Content-Type": "application/json",
       },
     }
