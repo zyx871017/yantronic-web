@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       messages,
       model: "yantronic",
       temperature: 0.7,
-      max_tokens: 512,
+      max_tokens: 16000,
     },
     {
       headers: {
