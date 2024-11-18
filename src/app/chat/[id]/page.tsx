@@ -40,14 +40,14 @@ export default function ChatDetail({ params }: { params: { id: string } }) {
         className="p-6 overflow-y-auto"
         style={{ height: "calc(100vh - 132px)" }}
       >
-        {chatList.reverse().map((item) => (
-          <div key={item.id} className="w-[48rem] mx-auto">
+        {chatList.map((item) => (
+          <div key={item.itemId} className="w-[48rem] mx-auto">
             <div className="flex flex-col items-end px-5 py-4">
               <div className="px-5 py-2.5 rounded-3xl bg-main-surface-secondary">
                 {item.question}
               </div>
             </div>
-            {typingId === item.id ? (
+            {typingId === item.itemId ? (
               <p className="px-5 py-4 text-base leading-7">
                 <TypeWrite text={item.answer} onTypingEnd={typingEnd} />
               </p>

@@ -10,8 +10,12 @@ const CodeElement = ({ children, element }: any) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (codeRef.current) {
-      hljs.highlightElement(codeRef.current);
+    try {
+      if (codeRef.current) {
+        hljs.highlightElement(codeRef.current);
+      }
+    } catch (e) {
+      console.log(e);
     }
   }, []);
 
@@ -47,7 +51,7 @@ const CodeElement = ({ children, element }: any) => {
             </div>
           )}
         </div>
-        <code ref={codeRef}>{children}</code>
+        <code className="hljs" ref={codeRef}>{children}</code>
       </div>
     </pre>
   );

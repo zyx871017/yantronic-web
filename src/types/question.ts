@@ -1,5 +1,5 @@
 export type ChatItemType = {
-  id: number;
+  itemId: number;
   conversationId: number;
   question: string;
   createTime: string;
