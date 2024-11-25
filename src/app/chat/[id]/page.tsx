@@ -11,8 +11,8 @@ export default function ChatDetail() {
     chatList,
     typingAnswer,
     typingId,
-    setTypingId,
     sendStreamRequest,
+    preSaveChat,
   } = useChatList();
   const divRef = useRef<HTMLDivElement>(null);
 
@@ -25,10 +25,10 @@ export default function ChatDetail() {
   }, []);
 
   useEffect(() => {
-    if (chatList.length && typingId === -1) {
+    if (chatList.length && typingId.current === -1) {
       const unfinishedAnswer = chatList.find((item) => item.status === 0);
       if (unfinishedAnswer) {
-        setTypingId(unfinishedAnswer.itemId);
+        typingId.current = unfinishedAnswer.itemId;
         const messages: IMessageItem[] = [];
         chatList.forEach((item) => {
           if (item.status === 1) {
@@ -47,7 +47,7 @@ export default function ChatDetail() {
             });
           }
         });
-        sendStreamRequest(messages);
+        sendStreamRequest(messages, unfinishedAnswer.itemId);
       }
     }
     if (divRef.current) {
@@ -56,10 +56,14 @@ export default function ChatDetail() {
   }, [chatList]);
 
   const getAnswerItem = (item: ChatItemType) => {
-    if (item.status === 0 && typingId === item.itemId) {
+    if (item.status === 0) {
       return { answer: typingAnswer };
     }
     return item;
+  };
+
+  const confirmAsk = async (value: string) => {
+    await preSaveChat(value);
   };
 
   return (
@@ -81,7 +85,7 @@ export default function ChatDetail() {
         ))}
       </div>
       <div className="absolute bottom-5 left-6 right-6">
-        <ChatInput onAsk={() => {}} typing={false} />
+        <ChatInput onAsk={confirmAsk} typing={false} />
       </div>
     </>
   );

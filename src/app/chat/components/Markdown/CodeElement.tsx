@@ -1,5 +1,5 @@
 "use client";
-import hljs from "highlight.js";
+import hljs, { HighlightResult } from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
 import { useRef, useState } from "react";
 import { AiOutlineCopy, AiOutlineCheck } from "react-icons/ai";
@@ -9,8 +9,12 @@ const CodeElement = ({ element }: any) => {
   const codeRef = useRef(null);
   const text = element.children?.[0].text;
   const [copied, setCopied] = useState(false);
-  const parsedText = hljs.highlight(text, { language: element.lang });
-  console.log(parsedText);
+  let parsedText: HighlightResult = hljs.highlight("", { language: "text" });
+  try {
+    parsedText = hljs.highlight(text, { language: element.lang });
+  } catch (e) {
+    console.log(e);
+  }
 
   const copyCode = () => {
     navigator.clipboard

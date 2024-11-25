@@ -29,11 +29,12 @@ interface IAskQuestionRes {
 
 export async function askQuestion(data: {
   messages: IMessageItem[];
+  questionId?: number;
 }): Promise<IAskQuestionRes> {
-  return clientRequest.post("/api/fetchAsk", data);
+  return clientRequest.post("/api/fetchAskJson", data);
 }
 
-interface ISaveChatRes {
+export interface ISaveChatRes {
   code: number;
   msg: string;
   data: {

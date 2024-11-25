@@ -3,25 +3,25 @@ import { useState } from "react";
 import ChatInput from "./components/ChatInput";
 import { useChatList } from "@/contexts/ChatContext";
 import ChatListItem from "./components/ChatListItem";
-import { saveChat } from "@/service/question";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [question, setQuestion] = useState("");
   const [typing, setTyping] = useState(false);
   const router = useRouter();
-  const { typingAnswer } = useChatList();
+  const { typingAnswer, preSaveChat } = useChatList();
 
   // 确保依赖项完整
   const onAsk = async (value: string) => {
     setQuestion(value);
     setTyping(true);
-    const saveRes = await saveChat({ question: value, answer: "" });
+    const saveRes = await preSaveChat(value);
     if (saveRes && saveRes.code === 0) {
-      router.push(`/chat${saveRes.data.conversationId}`);
+      router.push(`/chat/${saveRes.data.conversationId}`);
     }
     setTyping(false);
   };
+
   return question ? (
     <>
       <div
