@@ -1,19 +1,16 @@
 "use client";
-import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "antd";
 import { useEffect, useRef } from "react";
 import { AiOutlineForm, AiOutlineMenuUnfold } from "react-icons/ai";
 import { useChatList } from "@/contexts/ChatContext";
-import TypeWrite from "../../../components/TypeWrite";
 import ChatListItem from "../../../components/ChatListItem";
 import ChatInput from "../../../components/ChatInput";
 import { useLayout } from "@/contexts/LayoutContext";
 
 const LeftContent = () => {
-  const params = useParams();
   const { setSideOpen } = useLayout();
-  const { chatList, typingId, setTypingId } = useChatList();
+  const { chatList } = useChatList();
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,11 +18,6 @@ const LeftContent = () => {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [chatList]);
-
-  const typingEnd = () => {
-    localStorage.removeItem("typingId");
-    setTypingId(-1);
-  };
 
   return (
     <>
@@ -56,18 +48,12 @@ const LeftContent = () => {
                 {item.question}
               </div>
             </div>
-            {typingId === item.itemId ? (
-              <p className="px-5 py-4 text-base leading-7">
-                <TypeWrite text={item.answer} onTypingEnd={typingEnd} />
-              </p>
-            ) : (
-              <ChatListItem item={item} />
-            )}
+            <ChatListItem item={item} />
           </div>
         ))}
       </div>
       <div className="absolute bottom-5 left-6 right-6">
-        <ChatInput id={params.id as string} />
+        <ChatInput onAsk={() => {}} typing={false} />
       </div>
     </>
   );
