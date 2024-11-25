@@ -13,7 +13,7 @@ import {
 } from "react-icons/ai";
 
 interface IProps {
-  item: ChatItemType;
+  item: Partial<ChatItemType>;
 }
 const ChatListItem = (props: IProps) => {
   const [liked, setLiked] = useState(false);
@@ -34,7 +34,7 @@ const ChatListItem = (props: IProps) => {
   };
   return (
     <div className="group relative mb-10">
-      <MarkdownReader text={item.answer} />
+      <MarkdownReader text={item.answer || ""} />
       <div className="absolute w-full h-10 -bottom-10 hidden group-hover:block">
         {copied ? (
           <Tooltip title="复制" placement="bottom">
@@ -47,7 +47,7 @@ const ChatListItem = (props: IProps) => {
             <Button
               className="!px-1"
               type="text"
-              onClick={() => copyText(item.answer)}
+              onClick={() => copyText(item.answer || "")}
             >
               <AiOutlineCopy className="size-5 text-text-secondary" />
             </Button>

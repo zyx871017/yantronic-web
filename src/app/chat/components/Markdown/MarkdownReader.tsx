@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createEditor, Descendant } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { unified } from "unified";
@@ -18,6 +18,21 @@ interface ITableCons {
   align: string[] | string;
   head?: boolean;
 }
+
+const filtEmptyNode = (rootNode: ITableCons[]): ITableCons[] => {
+  const result: ITableCons[] = [];
+  rootNode.forEach((item) => {
+    if (item.children) {
+      item.children = filtEmptyNode(item.children);
+      if (item.children.length) {
+        result.push(item);
+      }
+    } else {
+      result.push(item);
+    }
+  });
+  return result;
+};
 const markdownToSlate = (markdown: string): Descendant[] => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rootNode: any = unified()
@@ -25,7 +40,10 @@ const markdownToSlate = (markdown: string): Descendant[] => {
     .use(remarkGfm)
     .use(remarkToSlate)
     .processSync(markdown).result;
-  return rootNode as Descendant[];
+  const filteredNodes = filtEmptyNode(rootNode);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  return filteredNodes;
 };
 
 const formatElement = (node: ITableCons) => {
@@ -99,9 +117,22 @@ const renderElement = ({ element, children }: any) => {
 };
 const MarkdownRenderer = (props: { text: string }) => {
   const [editor] = useState(() => withReact(createEditor()));
-  const initialValue = markdownToSlate(props.text);
+  const [value, setValue] = useState<Descendant[]>([]);
+  useEffect(() => {
+    try {
+      const newValue = markdownToSlate(props.text);
+      setValue(newValue);
+      editor.children = newValue;
+      editor.onChange();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [props.text, editor]);
+  const newSlateValue = (newValue: Descendant[]) => {
+    setValue(newValue);
+  };
   return (
-    <Slate editor={editor} initialValue={initialValue}>
+    <Slate editor={editor} initialValue={value} onChange={newSlateValue}>
       <Editable className="markdown" readOnly renderElement={renderElement} />
     </Slate>
   );

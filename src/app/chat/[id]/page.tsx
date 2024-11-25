@@ -1,36 +1,65 @@
 "use client";
 import ChatInput from "../components/ChatInput";
 import { useEffect, useRef } from "react";
-import TypeWrite from "../components/TypeWrite";
-import { useLoading } from "@/contexts/LoadingContext";
 import { useChatList } from "@/contexts/ChatContext";
 import ChatListItem from "../components/ChatListItem";
+import { ChatItemType, IMessageItem } from "@/types/question";
 
-export default function ChatDetail({ params }: { params: { id: string } }) {
-  const { updateChatList, chatList, typingId, setTypingId } = useChatList();
-  const { setIsLoading } = useLoading();
+export default function ChatDetail() {
+  const {
+    updateChatList,
+    chatList,
+    typingAnswer,
+    typingId,
+    setTypingId,
+    sendStreamRequest,
+  } = useChatList();
   const divRef = useRef<HTMLDivElement>(null);
+
   const initData = async () => {
-    setIsLoading(true);
     await updateChatList();
-    setIsLoading(false);
-    if (divRef.current) {
-      divRef.current.scrollTop = divRef.current.scrollHeight;
-    }
   };
+
   useEffect(() => {
     initData();
   }, []);
 
   useEffect(() => {
+    if (chatList.length && typingId === -1) {
+      const unfinishedAnswer = chatList.find((item) => item.status === 0);
+      if (unfinishedAnswer) {
+        setTypingId(unfinishedAnswer.itemId);
+        const messages: IMessageItem[] = [];
+        chatList.forEach((item) => {
+          if (item.status === 1) {
+            messages.push({
+              role: "user",
+              content: item.question,
+            });
+            messages.push({
+              role: "assistant",
+              content: item.answer,
+            });
+          } else {
+            messages.push({
+              role: "user",
+              content: item.question,
+            });
+          }
+        });
+        sendStreamRequest(messages);
+      }
+    }
     if (divRef.current) {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [chatList]);
 
-  const typingEnd = () => {
-    localStorage.removeItem("typingId");
-    setTypingId(-1);
+  const getAnswerItem = (item: ChatItemType) => {
+    if (item.status === 0 && typingId === item.itemId) {
+      return { answer: typingAnswer };
+    }
+    return item;
   };
 
   return (
@@ -47,18 +76,12 @@ export default function ChatDetail({ params }: { params: { id: string } }) {
                 {item.question}
               </div>
             </div>
-            {typingId === item.itemId ? (
-              <p className="px-5 py-4 text-base leading-7">
-                <TypeWrite text={item.answer} onTypingEnd={typingEnd} />
-              </p>
-            ) : (
-              <ChatListItem item={item} />
-            )}
+            <ChatListItem item={getAnswerItem(item)} />
           </div>
         ))}
       </div>
       <div className="absolute bottom-5 left-6 right-6">
-        <ChatInput id={params.id} />
+        <ChatInput onAsk={() => {}} typing={false} />
       </div>
     </>
   );

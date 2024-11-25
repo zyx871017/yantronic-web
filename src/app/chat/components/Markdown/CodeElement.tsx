@@ -1,23 +1,16 @@
 "use client";
 import hljs from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { AiOutlineCopy, AiOutlineCheck } from "react-icons/ai";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CodeElement = ({ children, element }: any) => {
+const CodeElement = ({ element }: any) => {
   const codeRef = useRef(null);
+  const text = element.children?.[0].text;
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    try {
-      if (codeRef.current) {
-        hljs.highlightElement(codeRef.current);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+  const parsedText = hljs.highlight(text, { language: element.lang });
+  console.log(parsedText);
 
   const copyCode = () => {
     navigator.clipboard
@@ -32,7 +25,7 @@ const CodeElement = ({ children, element }: any) => {
   };
 
   return (
-    <pre className="mt-2 cai-code">
+    <pre className="mt-4 cai-code mb-4">
       <div className="border-[0.5px] border-token-border-medium rounded-md overflow-hidden">
         <div className="bg-main-surface-secondary text-text-secondary px-4 py-2 flex justify-between h-9">
           <div className="text-sm">{element.lang}</div>
@@ -51,7 +44,11 @@ const CodeElement = ({ children, element }: any) => {
             </div>
           )}
         </div>
-        <code className="hljs" ref={codeRef}>{children}</code>
+        <code
+          className="hljs"
+          ref={codeRef}
+          dangerouslySetInnerHTML={{ __html: parsedText.value }}
+        ></code>
       </div>
     </pre>
   );

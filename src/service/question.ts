@@ -1,6 +1,6 @@
 import { IResponse } from "@/types";
 import clientRequest from "./clientRequest";
-import { ChatItemType } from "@/types/question";
+import { ChatItemType, IMessageItem } from "@/types/question";
 
 export async function getHistoryList(params: {
   page: number;
@@ -26,10 +26,7 @@ interface IAskQuestionRes {
   code: number;
   answer: string;
 }
-interface IMessageItem {
-  role: "user" | "assistant";
-  content: string;
-}
+
 export async function askQuestion(data: {
   messages: IMessageItem[];
 }): Promise<IAskQuestionRes> {
@@ -39,13 +36,9 @@ export async function askQuestion(data: {
 interface ISaveChatRes {
   code: number;
   msg: string;
-  answer: {
-    code: number;
-    msg: string;
-    data: {
-      conversationId: number;
-      questionId: number;
-    };
+  data: {
+    conversationId: number;
+    questionId: number;
   };
 }
 export async function saveChat(data: {

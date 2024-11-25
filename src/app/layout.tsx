@@ -28,14 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>悟空</title>
+        <title>悟东</title>
         <meta
           name="keywords"
           content="言创智信,AI对话,AI聊天,AI写作,AIGC,AI,AI图片生成"
         />
         <meta
           name="description"
-          content="言创智信是一家前瞻性的人工智能公司，专注于开发和应用通用人工智能（AGI）技术。我们相信，通过生成式AI的创新，可以推动智能技术的全面发展，实现智能与人类的深度协同。"
+          content="悟东是一家前瞻性的人工智能公司，专注于开发和应用通用人工智能（AGI）技术。我们相信，通过生成式AI的创新，可以推动智能技术的全面发展，实现智能与人类的深度协同。"
         ></meta>
         <script
           dangerouslySetInnerHTML={{
