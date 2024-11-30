@@ -1,20 +1,32 @@
 "use client";
 import hljs, { HighlightResult } from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
-import { useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { AiOutlineCopy, AiOutlineCheck } from "react-icons/ai";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CodeElement = ({ element }: any) => {
+let preDom: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CodeElement = memo(({ element }: any) => {
   const codeRef = useRef(null);
   const text = element.children?.[0].text;
   const [copied, setCopied] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   let parsedText: HighlightResult = hljs.highlight("", { language: "text" });
   try {
     parsedText = hljs.highlight(text, { language: element.lang });
   } catch (e) {
     console.log(e);
   }
+
+  useEffect(() => {
+    if (preDom === containerRef.current) {
+      console.log(true);
+    } else {
+      console.log(false);
+      preDom = containerRef.current;
+    }
+  }, []);
 
   const copyCode = () => {
     navigator.clipboard
@@ -30,7 +42,10 @@ const CodeElement = ({ element }: any) => {
 
   return (
     <pre className="mt-4 cai-code mb-4">
-      <div className="border-[0.5px] border-token-border-medium rounded-md overflow-hidden">
+      <div
+        ref={containerRef}
+        className="border-[0.5px] border-token-border-medium rounded-md overflow-hidden"
+      >
         <div className="bg-main-surface-secondary text-text-secondary px-4 py-2 flex justify-between h-9">
           <div className="text-sm">{element.lang}</div>
           {copied ? (
@@ -56,6 +71,8 @@ const CodeElement = ({ element }: any) => {
       </div>
     </pre>
   );
-};
+});
+
+CodeElement.displayName = "CodeElement";
 
 export default CodeElement;

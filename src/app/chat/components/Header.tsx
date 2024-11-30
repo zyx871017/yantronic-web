@@ -2,8 +2,8 @@
 import { useLayout } from "@/contexts/LayoutContext";
 import { useLoginOpen } from "@/contexts/LoginContext";
 import { fetchLogout } from "@/service/user";
-import { isLogin } from "@/utils";
-import { Button, Dropdown, MenuProps } from "antd";
+import { isLogin, isMobile } from "@/utils";
+import { Button, Drawer, Dropdown, MenuProps } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -50,7 +50,14 @@ const Header = () => {
   }, [loginOpen]);
   return (
     <div className="h-14 p-3 flex justify-between items-center">
-      <div className="font-semibold text-lg text-text-secondary flex items-center">
+      <Button
+        className="hidden md:block !p-0"
+        type="text"
+        onClick={() => setSideOpen(true)}
+      >
+        <AiOutlineMenuUnfold className="size-6 text-text-primary" />
+      </Button>
+      <div className="font-semibold text-lg text-text-secondary flex items-center text-center">
         {sideOpen ? null : (
           <>
             <Button
@@ -84,6 +91,14 @@ const Header = () => {
           登录
         </Button>
       )}
+      <Drawer
+        width="20rem"
+        closeIcon={null}
+        open={isMobile() ? sideOpen : false}
+        placement="left"
+      >
+        
+      </Drawer>
     </div>
   );
 };

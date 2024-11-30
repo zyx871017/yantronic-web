@@ -3,7 +3,7 @@ import { useChatList } from "@/contexts/ChatContext";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useLoading } from "@/contexts/LoadingContext";
 import { deleteConversation, getHistoryList } from "@/service/question";
-import { QuestionItemType } from "@/types/question";
+import { ConversationItemType } from "@/types/question";
 import { isLogin } from "@/utils";
 import { Button, Dropdown, MenuProps } from "antd";
 import cls from "classnames";
@@ -18,7 +18,7 @@ import {
 } from "react-icons/ai";
 
 interface IMenuItemProps {
-  item: QuestionItemType;
+  item: ConversationItemType;
   onDelete: () => void;
 }
 
@@ -104,7 +104,7 @@ function MenuItem(props: IMenuItemProps) {
 
 export default function SideMenu() {
   const { id } = useParams();
-  const [dataList, setDataList] = useState<QuestionItemType[]>([]);
+  const [dataList, setDataList] = useState<ConversationItemType[]>([]);
   const { setSideOpen } = useLayout();
   const getData = async () => {
     const { data } = await getHistoryList({ page: 1, pageSize: 30 });

@@ -12,13 +12,13 @@ export interface IMessageItem {
   content: string;
 }
 
-export type QuestionItemType = {
+export type ConversationItemType = {
   question: string;
   conversationId: number;
   children: ChatItemType[];
 };
 
-export type QuestionAnswerType = {
+export type ConversationAnswerType = {
   id: string;
   object: string;
   created: number;

@@ -33,14 +33,46 @@ export async function GET(request: Request) {
     }
   );
   if (resData.code === 0) {
-    return NextResponse.json({
-      msg: "success",
-      code: 0,
-      data: resData.data,
-    });
+    return new Response(
+      JSON.stringify({
+        msg: "success",
+        code: 0,
+        data: resData.data,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      }
+    );
   } else {
-    return NextResponse.json({ msg: JSON.stringify(resData), code: -1 });
+    return new Response(
+      JSON.stringify({ msg: JSON.stringify(resData), code: -1 }),
+      {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      }
+    );
   }
+}
+
+export async function OPTIONS() {
+  console.log('options');
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  });
 }
 
 export async function POST() {

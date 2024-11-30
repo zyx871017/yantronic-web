@@ -135,7 +135,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         const chunk = decoder.decode(value, { stream: true });
         const content = getContent(chunk);
 
-        // 使用函数式更新确保获取最新的状态值
         setTypingAnswer((prevAnswer) => prevAnswer + content);
         answer += content;
       }
