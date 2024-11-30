@@ -1,3 +1,4 @@
+"use client";
 export const isLogin = () => {
   return !!localStorage.getItem("token");
 };
