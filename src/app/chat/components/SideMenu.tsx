@@ -1,11 +1,14 @@
 "use client";
+import { useChatList } from "@/contexts/ChatContext";
 import { useLayout } from "@/contexts/LayoutContext";
+import { useLoading } from "@/contexts/LoadingContext";
 import { deleteConversation, getHistoryList } from "@/service/question";
 import { QuestionItemType } from "@/types/question";
-import { Button, Dropdown, MenuProps, Tooltip } from "antd";
+import { isLogin } from "@/utils";
+import { Button, Dropdown, MenuProps } from "antd";
 import cls from "classnames";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, MouseEvent } from "react";
 import {
   AiOutlineForm,
@@ -22,12 +25,20 @@ interface IMenuItemProps {
 function MenuItem(props: IMenuItemProps) {
   const { item, onDelete } = props;
   const { id } = useParams();
+  const { setIsLoading } = useLoading();
+  const { setChatList } = useChatList();
+  const router = useRouter();
 
   const deleteQuestion = async (e: MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     try {
-      await deleteConversation({ conversationId: item.id });
+      setIsLoading(true);
+      await deleteConversation({ conversationId: item.conversationId });
       onDelete();
+      setIsLoading(false);
+      if (+id === item.conversationId) {
+        router.push("/chat");
+      }
     } catch (e) {
       console.log(e);
     }
@@ -53,18 +64,19 @@ function MenuItem(props: IMenuItemProps) {
   ];
   return (
     <Link
-      href={`/chat/${item.id}`}
-      key={item.id}
+      href={`/chat/${item.conversationId}`}
+      key={item.conversationId}
       className={cls(
         "rounded-lg px-2.5 py-1.5 text-sm cursor-pointer group",
         "text-nowrap",
         "overflow-hidden",
         "relative",
         "hover:bg-sidebar-surface-secondary",
-        +id === item.id ? "bg-sidebar-surface-secondary" : ""
+        +id === item.conversationId ? "bg-sidebar-surface-secondary" : ""
       )}
+      onClick={() => setChatList([])}
     >
-      {item.title}
+      {item.question}
       <div className="absolute bottom-0 top-0 right-0 w-10 bg-gradient-to-l from-60% to-transparent from-sidebar-surface-primary group-hover:from-sidebar-surface-secondary"></div>
       <Dropdown
         menu={{
@@ -76,9 +88,12 @@ function MenuItem(props: IMenuItemProps) {
         <span
           className={cls(
             "absolute px-1 bottom-0 top-0 right-0 w-8 group-hover:flex items-center justify-end bg-sidebar-surface-secondary",
-            +id === item.id ? "flex" : "hidden"
+            +id === item.conversationId ? "flex" : "hidden"
           )}
-          onClick={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
         >
           <AiOutlineEllipsis className="size-6" />
         </span>
@@ -96,7 +111,9 @@ export default function SideMenu() {
     setDataList(data.items);
   };
   useEffect(() => {
-    getData();
+    if (isLogin()) {
+      getData();
+    }
   }, [id]);
 
   return (
@@ -123,7 +140,11 @@ export default function SideMenu() {
       <div className="px-3 flex flex-col gap-[2px] flex-1 overflow-y-auto">
         {dataList.map((item) => {
           return (
-            <MenuItem key={item.id} onDelete={() => getData()} item={item} />
+            <MenuItem
+              key={item.conversationId}
+              onDelete={() => getData()}
+              item={item}
+            />
           );
         })}
       </div>

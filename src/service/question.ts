@@ -1,6 +1,6 @@
 import { IResponse } from "@/types";
 import clientRequest from "./clientRequest";
-import { ChatItemType, QuestionAnswerType } from "@/types/question";
+import { ChatItemType, IMessageItem } from "@/types/question";
 
 export async function getHistoryList(params: {
   page: number;
@@ -26,26 +26,20 @@ interface IAskQuestionRes {
   code: number;
   answer: string;
 }
-interface IMessageItem {
-  role: "user" | "assistant";
-  content: string;
-}
+
 export async function askQuestion(data: {
   messages: IMessageItem[];
+  questionId?: number;
 }): Promise<IAskQuestionRes> {
-  return clientRequest.post("/api/fetchAsk", data);
+  return clientRequest.post("/api/fetchAskJson", data);
 }
 
-interface ISaveChatRes {
+export interface ISaveChatRes {
   code: number;
   msg: string;
-  answer: {
-    code: number;
-    msg: string;
-    data: {
-      conversationId: number;
-      questionId: number;
-    };
+  data: {
+    conversationId: number;
+    questionId: number;
   };
 }
 export async function saveChat(data: {
@@ -60,4 +54,8 @@ export async function deleteConversation(data: {
   conversationId: number;
 }): Promise<IResponse> {
   return clientRequest.post("/api/deleteConversation", data);
+}
+
+export async function testSentry() {
+  return clientRequest.post("/api/getChatList");
 }

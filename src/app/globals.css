@@ -376,7 +376,7 @@ body {
 * {
   scrollbar-color: #181818 transparent;
   transition-property: none;
-  transition-duration: .5s !important;
+  transition-duration: 0.5s !important;
   transition-timing-function: ease-in;
 }
 
@@ -457,4 +457,65 @@ body {
 }
 .markdown hr:where(h1 + *) {
   margin-top: 0;
+}
+
+.code-editor .monaco-editor {
+  --vscode-editorGutter-background: var(--main-surface-secondary) !important;
+  --vscode-editor-background: var(--main-surface-secondary) !important;
+}
+
+.codemirror-content .cm-editor {
+  font-size: 14px;
+  overflow-wrap: break-word;
+  caret-color: var(--text-primary);
+  font-weight: 600;
+}
+
+.codemirror-content .cm-gutters {
+  color: var(--text-secondary);
+  background-color: var(--main-surface-secondary);
+  padding-left: 12px;
+  padding-right: 2px;
+  border-right: none;
+}
+
+.codemirror-content .cm-activeLineGutter {
+  background-color: var(--main-surface-secondary);
+}
+
+.codemirror-content .cm-content {
+  overflow-x: hidden;
+  flex: 1;
+}
+
+.codemirror-content .cm-content ::selection {
+  background-color: #6199ff2f !important;
+}
+
+.codemirror-content .cm-line {
+  white-space: break-spaces;
+  caret-color: #fff !important;
+}
+
+.codemirror-content .cm-activeLine {
+  background-color: transparent;
+}
+
+.codemirror-content .cm-activeLine ::selection {
+  background-color: #6199ff2f !important;
+}
+
+.ant-popover .ant-popover-content .ant-popover-inner {
+  cursor: pointer;
+  background-color: var(--main-surface-primary);
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-color: var(--border-light);
+  height: 40px;
+  padding: 0;
+  line-height: 40px;
+  transition: all linear 0.3s;
+}
+.ant-popover .ant-popover-content .ant-popover-inner:hover {
+  background-color: var(--main-surface-secondary);
 }

@@ -1,17 +1,29 @@
 "use client";
-import { ChatItemType } from "@/types/question";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import type { ChatItemType, IMessageItem } from "@/types/question";
+import React, {
+  createContext,
+  MutableRefObject,
+  ReactNode,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import { useLoading } from "./LoadingContext";
-import { getChatDetail } from "@/service/question";
+import { getChatDetail, ISaveChatRes, saveChat } from "@/service/question";
 import { useParams } from "next/navigation";
+import { getContent } from "@/utils/chat";
 
 interface ChatContextProps {
   chatList: ChatItemType[];
+  typingId: MutableRefObject<number>;
+  typingAnswer: string;
+  setTypingAnswer: (v: string) => void;
+  queryMore: () => void;
+  sendStreamRequest: (messages: IMessageItem[], questionId: number) => void;
   setChatList: (list: ChatItemType[]) => void;
   updateChatList: () => void;
-  typingId: number;
-  setTypingId: (v: number) => void;
-  queryMore: () => void;
+  preSaveChat: (value: string) => Promise<ISaveChatRes>;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
@@ -21,13 +33,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [chatList, setChatList] = useState<ChatItemType[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const [typingId, setTypingId] = useState(-1);
+  const typingId: MutableRefObject<number> = useRef(-1);
+  const [typingAnswer, setTypingAnswer] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { setIsLoading } = useLoading();
   const { id } = useParams();
 
   const updateChatList = async () => {
-    setIsLoading(true);
     const res = await getChatDetail({
       page: 1,
       pageSize: 10,
@@ -37,8 +49,103 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       setChatList(res.data.items.reverse());
       setHasMore(res.data.hasMore);
     }
-    setIsLoading(false);
   };
+
+  const preSaveChat = async (value: string) => {
+    const saveRes = await saveChat({
+      question: value,
+      answer: "",
+      conversationId: id as string,
+    });
+    const {
+      data: { conversationId, questionId },
+    } = saveRes;
+    if (chatList[0]?.conversationId === conversationId) {
+      setChatList([
+        ...chatList,
+        {
+          conversationId: conversationId,
+          itemId: questionId,
+          question: value,
+          answer: "",
+          status: 0,
+          createTime: "",
+        },
+      ]);
+    } else {
+      setChatList([
+        {
+          conversationId: conversationId,
+          itemId: questionId,
+          question: value,
+          answer: "",
+          status: 0,
+          createTime: "",
+        },
+      ]);
+    }
+    return saveRes;
+  };
+
+  const pushNewChat = (typingAnswer: string) => {
+    setChatList((prevChatList) => {
+      const unfinishIndex = prevChatList.findIndex((item) => item.status === 0);
+      if (unfinishIndex >= 0) {
+        const updatedChatList = [...prevChatList];
+        updatedChatList[unfinishIndex].answer = typingAnswer;
+        updatedChatList[unfinishIndex].status = 1;
+        return updatedChatList;
+      }
+      return prevChatList;
+    });
+
+    setTypingAnswer("");
+  };
+
+  const sendStreamRequest = useCallback(
+    async (messages: IMessageItem[], questionId: number) => {
+      const url = "/api/fetchAsk";
+      const token = localStorage.getItem("token");
+      const headers = {
+        Accept: "text/event-stream",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({ messages, questionId }),
+      });
+
+      if (!response.ok) {
+        console.error("Error sending request:", response.status);
+        return;
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      let done = false;
+      let answer = "";
+      while (!done && reader) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const content = getContent(chunk);
+
+        // 使用函数式更新确保获取最新的状态值
+        setTypingAnswer((prevAnswer) => prevAnswer + content);
+        answer += content;
+      }
+      if (done) {
+        typingId.current = -1;
+        pushNewChat(answer);
+      }
+    },
+    [setTypingAnswer]
+  );
 
   const queryMore = async () => {
     if (hasMore) {
@@ -60,12 +167,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <ChatContext.Provider
       value={{
-        chatList,
         setChatList,
+        setTypingAnswer,
         updateChatList,
         queryMore,
+        sendStreamRequest,
+        preSaveChat,
         typingId,
-        setTypingId,
+        chatList,
+        typingAnswer,
       }}
     >
       {children}

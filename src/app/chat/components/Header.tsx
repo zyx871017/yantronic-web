@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { AiOutlineForm, AiOutlineMenuUnfold } from "react-icons/ai";
 
 const Header = () => {
-  const { setLoginOpen } = useLoginOpen();
+  const { setLoginOpen, loginOpen } = useLoginOpen();
   const [hasLogin, setHasLogin] = useState(false);
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
@@ -23,6 +23,7 @@ const Header = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("avatar");
     router.push("/chat");
+    setHasLogin(false);
   };
   const items: MenuProps["items"] = [
     { label: <span>{username}</span>, key: 0 },
@@ -44,6 +45,9 @@ const Header = () => {
         : localStorage.getItem("avatar") || "/img/avatar.png";
     setAvatar(currentAvatar);
   }, []);
+  useEffect(() => {
+    setHasLogin(isLogin());
+  }, [loginOpen]);
   return (
     <div className="h-14 p-3 flex justify-between items-center">
       <div className="font-semibold text-lg text-text-secondary flex items-center">

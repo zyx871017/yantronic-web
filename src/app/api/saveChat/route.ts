@@ -9,9 +9,13 @@ export async function POST(request: Request) {
   const body = await request.json();
   const Headers = request.headers;
   const { conversationId, question, answer } = body;
-  const resData = await serverRequest.post(
+  const resData: {
+    code: number;
+    data: { conversationId: number; questionId: number };
+    msg: string;
+  } = await serverRequest.post(
     "https://cxy.lianwo123.com/api/v1/conversation/question",
-    { conversationId, question, answer },
+    { conversationId, question, answer, status: 0 },
     {
       headers: {
         "Content-Type": "application/json",
@@ -19,13 +23,9 @@ export async function POST(request: Request) {
       },
     }
   );
-  if (resData) {
-    return NextResponse.json({
-      msg: "success",
-      code: 0,
-      answer: resData,
-    });
+  if (resData.code === 0) {
+    return NextResponse.json(resData);
   } else {
-    return NextResponse.json({ msg: JSON.stringify(resData), code: -1 });
+    return NextResponse.json({ msg: resData.msg, code: -1 });
   }
 }

@@ -1,14 +1,20 @@
 export type ChatItemType = {
-  id: number;
+  itemId: number;
   conversationId: number;
   question: string;
   createTime: string;
   answer: string;
+  status: 0 | 1;
 };
 
+export interface IMessageItem {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export type QuestionItemType = {
-  title: string;
-  id: number;
+  question: string;
+  conversationId: number;
   children: ChatItemType[];
 };
 
@@ -19,11 +25,7 @@ export type QuestionAnswerType = {
   model: string;
   choices: {
     id: number;
-    message: {
-      role: string;
-      content: string;
-      tool_calls: [];
-    };
+    message: IMessageItem;
     finish_reason: string;
   }[];
   usage: {
