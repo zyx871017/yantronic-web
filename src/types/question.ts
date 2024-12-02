@@ -15,7 +15,7 @@ export interface IMessageItem {
 export type ConversationItemType = {
   question: string;
   conversationId: number;
-  children: ChatItemType[];
+  children?: ChatItemType[];
 };
 
 export type ConversationAnswerType = {
