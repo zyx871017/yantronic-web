@@ -152,7 +152,7 @@ export default function SideMenu() {
     const now = dayjs(); // 当前时间
 
     data.forEach((item) => {
-      const itemDate = dayjs(item.createTime); // 使用 dayjs 解析日期
+      const itemDate = dayjs(item.createTime).startOf("day"); // 记录时间（当天的零点）
       const diffDays = now.diff(itemDate, "day"); // 直接获取天数差值
       if (diffDays === 0) {
         // 今天
