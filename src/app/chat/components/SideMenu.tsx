@@ -111,7 +111,6 @@ export default function SideMenu() {
   const { setSideOpen } = useLayout();
   const getData = async () => {
     const { data } = await getHistoryList({ page: 1, pageSize: 30 });
-    console.log(categorizeData(data.items));
     setHistoryList(categorizeData(data.items));
   };
   type Conversation = {
@@ -203,7 +202,6 @@ export default function SideMenu() {
       </div>
       <div className="px-3 flex-1 overflow-y-auto">
         {Object.entries(historyList).map(([key, data], index) => {
-          console.log(data, index);
           return (
             data.length !== 0 && (
               <div key={key}>
