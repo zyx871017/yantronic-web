@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { ChatItemType } from "@/types/question";
-import MarkdownReader from "./Markdown/MarkdownReader";
+import MarkdownReader from "@/components/Markdown/MarkdownReader";
 import { Button, Tooltip } from "antd";
 import {
   AiFillDislike,

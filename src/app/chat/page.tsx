@@ -16,9 +16,9 @@ export default function Home() {
     setQuestion(value);
     setTyping(true);
     const saveRes = await preSaveChat(value);
-    if (saveRes && saveRes.code === 0) {
-      router.push(`/chat/${saveRes.data.conversationId}`);
-    }
+    // if (saveRes && saveRes.code === 0) {
+    //   router.push(`/chat/${saveRes.data.conversationId}`);
+    // }
     setTyping(false);
   };
 

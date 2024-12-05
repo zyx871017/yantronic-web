@@ -101,11 +101,13 @@ export default function GlobalLogin() {
           <div className="mb-4">
             <Checkbox onChange={handleCheck} className="!mr-2" />
             <span className="mr-1">已阅读并同意言创的</span>
-            <Link className="mr-1" href="">
+            <Link href="/legal/terms" target="__blank__" className="mr-1">
               使用协议
             </Link>
             <span className="mr-1">和</span>
-            <Link href="">隐私政策</Link>
+            <Link href="/legal/privacy" target="__blank__">
+              隐私政策
+            </Link>
           </div>
         </div>
       </Modal>

@@ -20,6 +20,7 @@ const MainContent: React.FC<{ children: ReactNode }> = ({ children }) => {
         <div className="size-full relative">
           <Header />
           {children}
+          <div className="absolute bottom-0 text-sm text-text-tertiary text-center w-full">内容由言创AI大模型生成，仅供您参考</div>
         </div>
       </div>
     </div>
