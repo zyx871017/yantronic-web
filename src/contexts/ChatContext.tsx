@@ -20,7 +20,11 @@ interface ChatContextProps {
   typingAnswer: string;
   setTypingAnswer: (v: string) => void;
   queryMore: () => void;
-  sendStreamRequest: (messages: IMessageItem[], questionId: number) => void;
+  sendStreamRequest: (
+    messages: IMessageItem[],
+    questionId: number,
+    cancelCallBack: (fn: () => void) => void
+  ) => void;
   setChatList: (list: ChatItemType[]) => void;
   updateChatList: () => void;
   preSaveChat: (value: string) => Promise<ISaveChatRes>;
@@ -103,7 +107,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const sendStreamRequest = useCallback(
-    async (messages: IMessageItem[], questionId: number) => {
+    async (
+      messages: IMessageItem[],
+      questionId: number,
+      cancelCallBack: (fn: () => void) => void
+    ) => {
       const url = "/api/fetchAsk";
       const token = localStorage.getItem("token");
       const headers = {
@@ -111,36 +119,60 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       };
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify({ messages, questionId }),
-      });
-
-      if (!response.ok) {
-        console.error("Error sending request:", response.status);
-        return;
-      }
-
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
       let done = false;
       let answer = "";
-      while (!done && reader) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
+      try {
+        // 创建一个 AbortController 实例
+        const controller = new AbortController();
+        // 获取信号对象
+        const signal = controller.signal;
+        console.log(cancelCallBack);
+        // 将取消请求的函数传递回调用方
+        cancelCallBack(() => {
+          console.log(controller);
+          controller?.abort();
+        });
+        const response = await fetch(url, {
+          method: "POST",
+          headers: headers,
+          signal: signal,
+          body: JSON.stringify({ messages, questionId }),
+        });
 
-        const chunk = decoder.decode(value, { stream: true });
-        const content = getContent(chunk);
+        if (!response.ok) {
+          console.error("Error sending request:", response.status);
+          return;
+        }
 
-        setTypingAnswer((prevAnswer) => prevAnswer + content);
-        answer += content;
-      }
-      if (done) {
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+
+        while (!done && reader) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const content = getContent(chunk);
+
+          setTypingAnswer((prevAnswer) => prevAnswer + content);
+          answer += content;
+        }
+        if (done) {
+          typingId.current = -1;
+          pushNewChat(answer);
+        }
+      } catch (err: unknown) {
         typingId.current = -1;
         pushNewChat(answer);
+        if (err instanceof Error) {
+          if (err.name === "AbortError") {
+            console.log("请求被中止");
+          } else {
+            console.error(err);
+          }
+        } else {
+          console.error("未知错误:", err);
+        }
       }
     },
     [setTypingAnswer]
