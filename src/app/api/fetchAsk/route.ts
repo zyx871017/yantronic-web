@@ -56,6 +56,7 @@ export async function POST(request: Request) {
     ...options,
     body: reqBody,
   });
+
   if (!targetResponse.ok) {
     return new Response("Error from target service", {
       status: targetResponse.status,
@@ -108,6 +109,18 @@ export async function POST(request: Request) {
 
       // 启动读取过程
       read();
+    },
+    cancel(reason) {
+      completeChat(
+        {
+          itemId: questionId,
+          question,
+          answer,
+          status: 1,
+        },
+        Headers
+      );
+      console.log("Stream canceled:", reason, "==========");
     },
   });
 

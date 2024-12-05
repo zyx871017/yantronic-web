@@ -16,6 +16,7 @@ import {
   AiOutlinePlus,
   AiOutlineEllipsis,
 } from "react-icons/ai";
+import dayjs from "dayjs";
 
 interface IMenuItemProps {
   item: ConversationItemType;
@@ -67,6 +68,7 @@ function MenuItem(props: IMenuItemProps) {
       href={`/chat/${item.conversationId}`}
       key={item.conversationId}
       className={cls(
+        "block",
         "rounded-lg px-2.5 py-1.5 text-sm cursor-pointer group",
         "text-nowrap",
         "overflow-hidden",
@@ -104,12 +106,73 @@ function MenuItem(props: IMenuItemProps) {
 
 export default function SideMenu() {
   const { id } = useParams();
-  const [dataList, setDataList] = useState<ConversationItemType[]>([]);
+
+  const [historyList, setHistoryList] = useState<CategorizedData>({});
   const { setSideOpen } = useLayout();
   const getData = async () => {
     const { data } = await getHistoryList({ page: 1, pageSize: 30 });
-    setDataList(data.items);
+    setHistoryList(categorizeData(data.items));
   };
+  type Conversation = {
+    conversationId: number;
+    createTime: string;
+    question: string;
+  };
+  type CategorizedData = {
+    [key: string]: Conversation[];
+  };
+  const dayLabels = [
+    "今天",
+    "昨天",
+    "前天",
+    "3天前",
+    "4天前",
+    "5天前",
+    "6天前",
+  ];
+  const weekLabels = ["上周", "2周前", "3周前", "4周前"];
+
+  const categorizeData = (data: Conversation[]): CategorizedData => {
+    const categories: CategorizedData = {
+      今天: [],
+      昨天: [],
+      前天: [],
+      "3天前": [],
+      "4天前": [],
+      "5天前": [],
+      "6天前": [],
+      上周: [],
+      "2周前": [],
+      "3周前": [],
+      "4周前": [],
+      上个月: [],
+    };
+
+    const now = dayjs(); // 当前时间
+
+    data.forEach((item) => {
+      const itemDate = dayjs(item.createTime).startOf("day"); // 记录时间（当天的零点）
+      const diffDays = now.diff(itemDate, "day"); // 直接获取天数差值
+      if (diffDays === 0) {
+        // 今天
+        categories["今天"].push(item);
+      } else if (diffDays <= 6) {
+        // 前 6 天
+        categories[dayLabels[diffDays]].push(item);
+      } else if (diffDays >= 7 && diffDays < 28) {
+        // 7 到 27 天，按周分类
+        const weekIndex = Math.floor((diffDays - 7) / 7);
+        const label = weekLabels[Math.min(weekIndex, weekLabels.length - 1)];
+        categories[label].push(item);
+      } else if (diffDays >= 30) {
+        // 超过 30 天的归类
+        categories["上个月"].push(item);
+      }
+    });
+
+    return categories;
+  };
+
   useEffect(() => {
     if (isLogin()) {
       getData();
@@ -137,14 +200,31 @@ export default function SideMenu() {
           <span className="text-sm font-semibold">新对话</span>
         </Link>
       </div>
-      <div className="px-3 flex flex-col gap-[2px] flex-1 overflow-y-auto">
-        {dataList.map((item) => {
+      <div className="px-3 flex-1 overflow-y-auto">
+        {Object.entries(historyList).map(([key, data], index) => {
           return (
-            <MenuItem
-              key={item.conversationId}
-              onDelete={() => getData()}
-              item={item}
-            />
+            data.length !== 0 && (
+              <div key={key}>
+                <div
+                  className={cls(
+                    "px-2 text-xs font-semibold text-ellipsis overflow-hidden break-all pt-3 pb-2 text-token-text-primary",
+                    { "mt-5": index !== 0 }
+                  )}
+                  key={key}
+                >
+                  {key}
+                </div>
+                {data.map((item) => {
+                  return (
+                    <MenuItem
+                      key={item.conversationId}
+                      onDelete={() => getData()}
+                      item={item}
+                    />
+                  );
+                })}
+              </div>
+            )
           );
         })}
       </div>
