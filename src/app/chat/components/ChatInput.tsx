@@ -57,7 +57,7 @@ const ChatInput = (props: IProps) => {
         onChange={(e) => inputChange(e.target.value)}
         onPressEnter={(e) => keyDown(e)}
         placeholder="尽管来问我～"
-        className="!border-0 !shadow-none !bg-transparent !px-2 !placeholder-text-secondary"
+        className="!border-0 !shadow-none !bg-transparent !px-2 !placeholder-text-secondary !text-text-primary"
         autoSize={{ minRows: 1, maxRows: 6 }}
         onCompositionStart={() => setIsComposing(true)}
         onCompositionEnd={() => setIsComposing(false)}
@@ -66,7 +66,10 @@ const ChatInput = (props: IProps) => {
         }}
       />
       <div className="flex h-[44px] items-center justify-between">
-        <Button type="text" icon={<MdAttachFile className="size-6 text-text-primary" />}></Button>
+        <Button
+          type="text"
+          icon={<MdAttachFile className="size-6 text-text-primary" />}
+        ></Button>
         {typing ? null : typingId.current !== -1 ? (
           <BsFillStopCircleFill
             onClick={() => onCancel()}

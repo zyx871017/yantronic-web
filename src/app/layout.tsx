@@ -67,7 +67,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div id="watermark" className="watermark"></div>
+        {/* <div id="watermark" className="watermark"></div> */}
         <GlobalProvider>{children}</GlobalProvider>
       </body>
       <Script id="custom-inline-script" strategy="afterInteractive">

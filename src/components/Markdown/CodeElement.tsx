@@ -1,11 +1,9 @@
 "use client";
 import hljs, { HighlightResult } from "highlight.js";
 import "highlight.js/styles/atom-one-dark.css";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { AiOutlineCopy, AiOutlineCheck } from "react-icons/ai";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let preDom: any = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CodeElement = memo(({ element }: any) => {
   const codeRef = useRef(null);
@@ -18,15 +16,6 @@ const CodeElement = memo(({ element }: any) => {
   } catch (e) {
     console.log(e);
   }
-
-  useEffect(() => {
-    if (preDom === containerRef.current) {
-      console.log(true);
-    } else {
-      console.log(false);
-      preDom = containerRef.current;
-    }
-  }, []);
 
   const copyCode = () => {
     navigator.clipboard
