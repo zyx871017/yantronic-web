@@ -1,4 +1,5 @@
 "use client";
+import { useConversation } from "@/contexts/ConversationContext";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useLoginOpen } from "@/contexts/LoginContext";
 import { fetchLogout } from "@/service/user";
@@ -12,6 +13,7 @@ import { AiOutlineForm, AiOutlineMenuUnfold } from "react-icons/ai";
 
 const Header = () => {
   const { setLoginOpen, loginOpen } = useLoginOpen();
+  const { updateConversation } = useConversation();
   const [hasLogin, setHasLogin] = useState(false);
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
@@ -22,6 +24,7 @@ const Header = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("avatar");
+    updateConversation({});
     router.push("/chat");
     setHasLogin(false);
   };
@@ -96,9 +99,7 @@ const Header = () => {
         closeIcon={null}
         open={isMobile() ? sideOpen : false}
         placement="left"
-      >
-        
-      </Drawer>
+      ></Drawer>
     </div>
   );
 };

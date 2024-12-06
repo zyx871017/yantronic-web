@@ -1,7 +1,15 @@
 "use client";
 import { getHistoryList } from "@/service/question";
 import { ConversationItemType } from "@/types/question";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import { isLogin } from "@/utils";
+import { useParams } from "next/navigation";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface ConversationContextProps {
   conversationList: ConversationItemType[];
@@ -19,11 +27,20 @@ export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [conversationList, setConversationList] = useState([]);
+  const { id } = useParams();
 
   const updateConversation = async ({ page = 1, pageSize = 30 }) => {
-    const { data } = await getHistoryList({ page, pageSize });
-    setConversationList(data.items);
+    if (isLogin()) {
+      const { data } = await getHistoryList({ page, pageSize });
+      setConversationList(data.items);
+    } else {
+      setConversationList([]);
+    }
   };
+
+  useEffect(() => {
+    updateConversation({});
+  }, [id]);
 
   return (
     <ConversationContext.Provider

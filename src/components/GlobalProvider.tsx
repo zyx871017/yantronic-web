@@ -6,6 +6,7 @@ import GlobalLogin from "./GlobalLogin";
 import GlobalLoading from "./GlobalLoading";
 import { ReactNode } from "react";
 import { LayoutProvider } from "@/contexts/LayoutContext";
+import { ConversationProvider } from "@/contexts/ConversationContext";
 
 const GlobalProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   return (
@@ -13,11 +14,13 @@ const GlobalProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       <LayoutProvider>
         <LoadingProvider>
           <LoginOpenProvider>
-            <ChatProvider>
-              <GlobalLogin />
-              <GlobalLoading />
-              {children}
-            </ChatProvider>
+            <ConversationProvider>
+              <ChatProvider>
+                <GlobalLogin />
+                <GlobalLoading />
+                {children}
+              </ChatProvider>
+            </ConversationProvider>
           </LoginOpenProvider>
         </LoadingProvider>
       </LayoutProvider>

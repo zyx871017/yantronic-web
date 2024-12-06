@@ -1,5 +1,5 @@
 "use client";
-import { useChatList } from "@/contexts/ChatContext";
+import { useConversation } from "@/contexts/ConversationContext";
 import { useLoginOpen } from "@/contexts/LoginContext";
 import { getVerifyCode, verifyCode } from "@/service/user";
 import { Button, Checkbox, message, Modal } from "antd";
@@ -8,7 +8,7 @@ import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
 export default function GlobalLogin() {
   const { loginOpen, setLoginOpen } = useLoginOpen();
-  const { updateChatList } = useChatList();
+  const { updateConversation } = useConversation();
   const [codeOpen, setCodeOpen] = useState(false);
   const [check, setCheck] = useState(false);
   const [countDown, setCountDown] = useState(0);
@@ -66,7 +66,7 @@ export default function GlobalLogin() {
         type: "login",
       });
       if (res.code === 0) {
-        updateChatList();
+        updateConversation({});
         setCodeOpen(false);
         setLoginOpen(false);
       } else {

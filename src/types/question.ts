@@ -16,6 +16,7 @@ export type ConversationItemType = {
   question: string;
   conversationId: number;
   children?: ChatItemType[];
+  createTime: string;
 };
 
 export type ConversationAnswerType = {

@@ -2,14 +2,13 @@
 import { useChatList } from "@/contexts/ChatContext";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useLoading } from "@/contexts/LoadingContext";
-import { deleteConversation, getHistoryList } from "@/service/question";
+import { deleteConversation } from "@/service/question";
 import { ConversationItemType } from "@/types/question";
-import { isLogin } from "@/utils";
 import { Button, Dropdown, MenuProps } from "antd";
 import cls from "classnames";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState, MouseEvent } from "react";
+import { MouseEvent } from "react";
 import {
   AiOutlineForm,
   AiOutlineMenuFold,
@@ -17,6 +16,7 @@ import {
   AiOutlineEllipsis,
 } from "react-icons/ai";
 import dayjs from "dayjs";
+import { useConversation } from "@/contexts/ConversationContext";
 
 interface IMenuItemProps {
   item: ConversationItemType;
@@ -105,21 +105,10 @@ function MenuItem(props: IMenuItemProps) {
 }
 
 export default function SideMenu() {
-  const { id } = useParams();
-
-  const [historyList, setHistoryList] = useState<CategorizedData>({});
+  const { conversationList, updateConversation } = useConversation();
   const { setSideOpen } = useLayout();
-  const getData = async () => {
-    const { data } = await getHistoryList({ page: 1, pageSize: 30 });
-    setHistoryList(categorizeData(data.items));
-  };
-  type Conversation = {
-    conversationId: number;
-    createTime: string;
-    question: string;
-  };
   type CategorizedData = {
-    [key: string]: Conversation[];
+    [key: string]: ConversationItemType[];
   };
   const dayLabels = [
     "今天",
@@ -132,7 +121,7 @@ export default function SideMenu() {
   ];
   const weekLabels = ["上周", "2周前", "3周前", "4周前"];
 
-  const categorizeData = (data: Conversation[]): CategorizedData => {
+  const categorizeData = (data: ConversationItemType[]): CategorizedData => {
     const categories: CategorizedData = {
       今天: [],
       昨天: [],
@@ -173,12 +162,6 @@ export default function SideMenu() {
     return categories;
   };
 
-  useEffect(() => {
-    if (isLogin()) {
-      getData();
-    }
-  }, [id]);
-
   return (
     <div className="bg-sidebar-surface-primary h-full border-r border-border hidden sm:flex flex-col overflow-hidden w-left-width">
       <div className="text-black mt-3 mx-0 flex items-center justify-between">
@@ -201,32 +184,34 @@ export default function SideMenu() {
         </Link>
       </div>
       <div className="px-3 flex-1 overflow-y-auto">
-        {Object.entries(historyList).map(([key, data], index) => {
-          return (
-            data.length !== 0 && (
-              <div key={key}>
-                <div
-                  className={cls(
-                    "px-2 text-xs font-semibold text-ellipsis overflow-hidden break-all pt-3 pb-2 text-token-text-primary",
-                    { "mt-5": index !== 0 }
-                  )}
-                  key={key}
-                >
-                  {key}
+        {Object.entries(categorizeData(conversationList)).map(
+          ([key, data], index) => {
+            return (
+              data.length !== 0 && (
+                <div key={key}>
+                  <div
+                    className={cls(
+                      "px-2 text-xs font-semibold text-ellipsis overflow-hidden break-all pt-3 pb-2 text-token-text-primary",
+                      { "mt-5": index !== 0 }
+                    )}
+                    key={key}
+                  >
+                    {key}
+                  </div>
+                  {data.map((item) => {
+                    return (
+                      <MenuItem
+                        key={item.conversationId}
+                        onDelete={() => updateConversation({})}
+                        item={item}
+                      />
+                    );
+                  })}
                 </div>
-                {data.map((item) => {
-                  return (
-                    <MenuItem
-                      key={item.conversationId}
-                      onDelete={() => getData()}
-                      item={item}
-                    />
-                  );
-                })}
-              </div>
-            )
-          );
-        })}
+              )
+            );
+          }
+        )}
       </div>
     </div>
   );
