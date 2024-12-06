@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import GlobalProvider from "@/components/GlobalProvider";
+import Script from "next/script";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -66,8 +67,30 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* <div id="watermark" className="watermark"></div> */}
         <GlobalProvider>{children}</GlobalProvider>
       </body>
+      <Script id="custom-inline-script" strategy="afterInteractive">
+        {`function createWatermark(text) {
+            const container = document.getElementById('watermark');
+            const rowCount = Math.ceil(window.innerHeight / 100); // 每行的高度间隔
+            const colCount = Math.ceil(window.innerWidth / 200); // 每列的宽度间隔
+
+            for (let i = 0; i < rowCount; i++) {
+                for (let j = 0; j < colCount; j++) {
+                    const watermark = document.createElement('div');
+                    watermark.className = 'watermark-text';
+                    watermark.textContent = text;
+                    watermark.style.top = \`\${i * 150}px\`;
+                    watermark.style.left = \`\${j * 250}px\`;
+                    container.appendChild(watermark);
+                }
+            }
+        }
+
+        // 创建水印
+        createWatermark('言创AI生成')`}
+      </Script>
     </html>
   );
 }

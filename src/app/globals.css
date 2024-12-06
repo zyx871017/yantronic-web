@@ -318,6 +318,7 @@ html {
   --sidebar-surface-primary: var(--gray-50);
   --sidebar-surface-secondary: var(--gray-100);
   --sidebar-surface-tertiary: var(--gray-200);
+  --watermark-text: var(--gray-100);
   --sidebar-title-primary: rgba(40, 40, 40, 0.5);
   --link: #2964aa;
   --link-hover: #749ac8;
@@ -346,6 +347,7 @@ html {
   --sidebar-surface-primary: var(--gray-900);
   --sidebar-surface-secondary: var(--gray-800);
   --sidebar-surface-tertiary: var(--gray-750);
+  --watermark-text: var(--gray-750);
   --link: #7ab7ff;
   --link-hover: #5e83b3;
   --surface-error: 249 58 55;
@@ -518,4 +520,23 @@ body {
 }
 .ant-popover .ant-popover-content .ant-popover-inner:hover {
   background-color: var(--main-surface-secondary);
+}
+
+.watermark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* 防止水印影响页面交互 */
+  z-index: 9999; /* 保证水印位于最上层 */
+}
+
+.watermark-text {
+  position: absolute;
+  color: var(--watermark-text); /* 半透明文字 */
+  font-size: 16px;
+  white-space: nowrap;
+  transform: rotate(-30deg); /* 倾斜角度 */
+  user-select: none; /* 防止用户选中文字 */
 }

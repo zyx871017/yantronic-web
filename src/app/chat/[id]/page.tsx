@@ -1,6 +1,6 @@
 "use client";
 import ChatInput from "../components/ChatInput";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useChatList } from "@/contexts/ChatContext";
 import ChatListItem from "../components/ChatListItem";
 import { ChatItemType, IMessageItem } from "@/types/question";
