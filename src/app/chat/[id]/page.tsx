@@ -1,6 +1,6 @@
 "use client";
 import ChatInput from "../components/ChatInput";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useChatList } from "@/contexts/ChatContext";
 import ChatListItem from "../components/ChatListItem";
 import { ChatItemType, IMessageItem } from "@/types/question";
@@ -13,9 +13,10 @@ export default function ChatDetail() {
     typingId,
     sendStreamRequest,
     preSaveChat,
+    cancelHandle,
   } = useChatList();
   const divRef = useRef<HTMLDivElement>(null);
-  const [cancelHandle, setCancelHandle] = useState<() => void>(() => {});
+
   const initData = async () => {
     await updateChatList();
   };
@@ -47,16 +48,14 @@ export default function ChatDetail() {
             });
           }
         });
-        sendStreamRequest(messages, unfinishedAnswer.itemId, cancelCallBack);
+        sendStreamRequest(messages, unfinishedAnswer.itemId);
       }
     }
     if (divRef.current) {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [chatList]);
-  const cancelCallBack = (cancel: () => void) => {
-    setCancelHandle(() => cancel); // 保存取消函数
-  };
+
   const getAnswerItem = (item: ChatItemType) => {
     if (item.status === 0) {
       return { answer: typingAnswer };

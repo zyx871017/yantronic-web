@@ -20,14 +20,11 @@ interface ChatContextProps {
   typingAnswer: string;
   setTypingAnswer: (v: string) => void;
   queryMore: () => void;
-  sendStreamRequest: (
-    messages: IMessageItem[],
-    questionId: number,
-    cancelCallBack: (fn: () => void) => void
-  ) => void;
+  sendStreamRequest: (messages: IMessageItem[], questionId: number) => void;
   setChatList: (list: ChatItemType[]) => void;
   updateChatList: () => void;
   preSaveChat: (value: string) => Promise<ISaveChatRes>;
+  cancelHandle: () => void;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
@@ -41,8 +38,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const [typingAnswer, setTypingAnswer] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { setIsLoading } = useLoading();
+  const [cancelHandle, setCancelHandle] = useState<() => void>(() => {});
   const { id } = useParams();
-
   const updateChatList = async () => {
     const res = await getChatDetail({
       page: 1,
@@ -107,11 +104,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const sendStreamRequest = useCallback(
-    async (
-      messages: IMessageItem[],
-      questionId: number,
-      cancelCallBack: (fn: () => void) => void
-    ) => {
+    async (messages: IMessageItem[], questionId: number) => {
       const url = "/api/fetchAsk";
       const token = localStorage.getItem("token");
       const headers = {
@@ -126,12 +119,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         const controller = new AbortController();
         // 获取信号对象
         const signal = controller.signal;
-        console.log(cancelCallBack);
-        // 将取消请求的函数传递回调用方
-        cancelCallBack(() => {
-          console.log(controller);
+        const cancel = () => {
           controller?.abort();
-        });
+        };
+        setCancelHandle(() => cancel);
         const response = await fetch(url, {
           method: "POST",
           headers: headers,
@@ -207,6 +198,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         typingId,
         chatList,
         typingAnswer,
+        cancelHandle,
       }}
     >
       {children}
