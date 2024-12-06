@@ -120,7 +120,7 @@ export async function POST(request: Request) {
         },
         Headers
       );
-      console.log("Stream canceled:", reason, "==========");
+      console.log("Stream canceled:", reason);
     },
   });
 

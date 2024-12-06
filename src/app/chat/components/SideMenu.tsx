@@ -21,10 +21,11 @@ import dayjs from "dayjs";
 interface IMenuItemProps {
   item: ConversationItemType;
   onDelete: () => void;
+  clickCallback?: () => void;
 }
 
 function MenuItem(props: IMenuItemProps) {
-  const { item, onDelete } = props;
+  const { item, onDelete, clickCallback = () => {} } = props;
   const { id } = useParams();
   const { setIsLoading } = useLoading();
   const { setChatList } = useChatList();
@@ -44,7 +45,10 @@ function MenuItem(props: IMenuItemProps) {
       console.log(e);
     }
   };
-
+  const clickHandle = () => {
+    setChatList([]);
+    clickCallback();
+  };
   const items: MenuProps["items"] = [
     {
       label: (
@@ -76,7 +80,7 @@ function MenuItem(props: IMenuItemProps) {
         "hover:bg-sidebar-surface-secondary",
         +id === item.conversationId ? "bg-sidebar-surface-secondary" : ""
       )}
-      onClick={() => setChatList([])}
+      onClick={clickHandle}
     >
       {item.question}
       <div className="absolute bottom-0 top-0 right-0 w-10 bg-gradient-to-l from-60% to-transparent from-sidebar-surface-primary group-hover:from-sidebar-surface-secondary"></div>
@@ -106,7 +110,7 @@ function MenuItem(props: IMenuItemProps) {
 
 export default function SideMenu() {
   const { id } = useParams();
-
+  const { cancelHandle, typingId } = useChatList();
   const [historyList, setHistoryList] = useState<CategorizedData>({});
   const { setSideOpen } = useLayout();
   const getData = async () => {
@@ -178,14 +182,18 @@ export default function SideMenu() {
       getData();
     }
   }, [id]);
-
+  const clickHandle = () => {
+    if (typingId.current !== -1) {
+      cancelHandle();
+    }
+  };
   return (
     <div className="bg-sidebar-surface-primary h-full border-r border-border hidden sm:flex flex-col overflow-hidden w-left-width">
       <div className="text-black mt-3 mx-0 flex items-center justify-between">
         <Button type="text" onClick={() => setSideOpen(false)}>
           <AiOutlineMenuFold className="size-6 text-text-primary" />
         </Button>
-        <Link href="/chat" className="px-4" type="text">
+        <Link href="/chat" className="px-4" type="text" onClick={clickHandle}>
           <AiOutlineForm className="size-6 text-text-primary" />
         </Link>
       </div>
@@ -193,6 +201,7 @@ export default function SideMenu() {
         <Link
           href="/chat"
           className="active:scale-[98%] border-[0.5px] w-full h-10 border-border-main flex items-center rounded-xl px-2 py-1.5 bg-main-light cursor-pointer"
+          onClick={clickHandle}
         >
           <div className="size-6 flex justify-center items-center">
             <AiOutlinePlus className="size-4" />
@@ -219,6 +228,7 @@ export default function SideMenu() {
                     <MenuItem
                       key={item.conversationId}
                       onDelete={() => getData()}
+                      clickCallback={clickHandle}
                       item={item}
                     />
                   );
