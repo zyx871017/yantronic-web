@@ -3,8 +3,8 @@ import { useConversation } from "@/contexts/ConversationContext";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useLoginOpen } from "@/contexts/LoginContext";
 import { fetchLogout } from "@/service/user";
-import { isLogin, isMobile } from "@/utils";
-import { Button, Drawer, Dropdown, MenuProps } from "antd";
+import { isLogin } from "@/utils";
+import { Button, Dropdown, MenuProps } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -94,12 +94,6 @@ const Header = () => {
           登录
         </Button>
       )}
-      <Drawer
-        width="20rem"
-        closeIcon={null}
-        open={isMobile() ? sideOpen : false}
-        placement="left"
-      ></Drawer>
     </div>
   );
 };

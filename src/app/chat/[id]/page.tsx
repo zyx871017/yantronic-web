@@ -17,6 +17,16 @@ export default function ChatDetail() {
   } = useChatList();
   const divRef = useRef<HTMLDivElement>(null);
 
+  const isBottom = () => {
+    if (divRef.current) {
+      const scrollTop = divRef.current.scrollTop;
+      const scrollHeight = divRef.current.scrollTop;
+      const divHeight = divRef.current.getBoundingClientRect().height;
+      return scrollHeight - scrollTop - divHeight < 20;
+    }
+    return false;
+  };
+
   const initData = async () => {
     await updateChatList();
   };
@@ -55,6 +65,12 @@ export default function ChatDetail() {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [chatList]);
+
+  useEffect(() => {
+    if (divRef.current && isBottom()) {
+      divRef.current.scrollTop = divRef.current.scrollHeight;
+    }
+  }, [typingAnswer]);
 
   const getAnswerItem = (item: ChatItemType) => {
     if (item.status === 0) {
