@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   let answer = "";
   const reqBody = JSON.stringify({
     messages,
-    model: "yantronic",
+    model: "yantronic2",
     temperature: 0.7,
     max_tokens: 16000,
     stream: true,

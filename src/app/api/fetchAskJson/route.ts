@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const targetUrl = "http://61.135.204.110:9997/v1/chat/completions";
   const reqBody = JSON.stringify({
     messages,
-    model: "yantronic",
+    model: "yantronic2",
     temperature: 0.7,
     max_tokens: 16000,
   });
