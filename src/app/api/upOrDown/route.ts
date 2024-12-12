@@ -8,10 +8,10 @@ export async function GET() {
 export async function POST(request: Request) {
   const body = await request.json();
   const Headers = request.headers;
-  const { conversationId } = body;
+  const { questionId, upOrDown } = body;
   const resData = await serverRequest.post(
-    "https://api.yantronic.com/api/v1/conversation/delete",
-    { conversationId },
+    "https://api.yantronic.com/api/v1/conversation/upOrDown",
+    { questionId, upOrDown },
     {
       headers: {
         "Content-Type": "application/json",

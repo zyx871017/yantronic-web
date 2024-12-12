@@ -13,7 +13,7 @@ const completeChat = async (
 ) => {
   const Authorization = Headers.get("Authorization");
   const resData = await serverRequest.put(
-    "https://cxy.lianwo123.com/api/v1/conversation/question",
+    "https://api.yantronic.com/api/v1/conversation/question",
     data,
     {
       headers: {

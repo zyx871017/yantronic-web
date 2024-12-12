@@ -8,7 +8,7 @@ export async function GET() {
 export async function POST(request: Request) {
   const Headers = request.headers;
   const resData = await serverRequest.post(
-    "https://cxy.lianwo123.com/api/v1/account/logout",
+    "https://api.yantronic.com/api/v1/account/logout",
     {},
     {
       headers: {

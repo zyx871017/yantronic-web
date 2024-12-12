@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { phone, headers, code } = body;
   const resData: IResponse = await serverRequest.post(
-    "https://cxy.lianwo123.com/api/v1/account/msg_login",
+    "https://api.yantronic.com/api/v1/account/msg_login",
     {
       phone,
       source: "web",

@@ -10,7 +10,12 @@ import React, {
   useState,
 } from "react";
 import { useLoading } from "./LoadingContext";
-import { getChatDetail, ISaveChatRes, saveChat } from "@/service/question";
+import {
+  fetchUpOrDown,
+  getChatDetail,
+  ISaveChatRes,
+  saveChat,
+} from "@/service/question";
 import { useParams } from "next/navigation";
 import { getContent } from "@/utils/chat";
 
@@ -18,6 +23,7 @@ interface ChatContextProps {
   chatList: ChatItemType[];
   typingId: MutableRefObject<number>;
   typingAnswer: string;
+  upOrDown: (data: { questionId: number; upOrDown: string }) => void;
   setTypingAnswer: (v: string) => void;
   queryMore: () => void;
   sendStreamRequest: (messages: IMessageItem[], questionId: number) => void;
@@ -186,19 +192,24 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const upOrDown = async (data: { questionId: number; upOrDown: string }) => {
+    await fetchUpOrDown(data);
+  };
+
   return (
     <ChatContext.Provider
       value={{
+        typingId,
+        chatList,
+        typingAnswer,
         setChatList,
         setTypingAnswer,
         updateChatList,
         queryMore,
         sendStreamRequest,
         preSaveChat,
-        typingId,
-        chatList,
-        typingAnswer,
         cancelHandle,
+        upOrDown,
       }}
     >
       {children}

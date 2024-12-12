@@ -11,13 +11,13 @@ import {
   AiOutlineDislike,
   AiOutlineLike,
 } from "react-icons/ai";
+import { fetchUpOrDown } from "@/service/question";
 
 interface IProps {
   item: Partial<ChatItemType>;
 }
 const ChatListItem = (props: IProps) => {
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
+  const [upOrDown, setUpOrDown] = useState("");
   const [copied, setCopied] = useState(false);
   const { item } = props;
 
@@ -31,6 +31,11 @@ const ChatListItem = (props: IProps) => {
         }, 2000);
       })
       .catch((e) => console.log(e));
+  };
+
+  const changeUpOrDown = async (key: string) => {
+    setUpOrDown(key);
+    fetchUpOrDown({ questionId: item.itemId || 0, upOrDown: key });
   };
   return (
     <div className="group relative mb-10">
@@ -53,14 +58,14 @@ const ChatListItem = (props: IProps) => {
             </Button>
           </Tooltip>
         )}
-        {disliked ? null : (
+        {upOrDown === "down" ? null : (
           <Tooltip title="最佳回复" placement="bottom">
             <Button
               className="!px-1"
               type="text"
-              onClick={() => setLiked(true)}
+              onClick={() => changeUpOrDown("up")}
             >
-              {liked ? (
+              {upOrDown === "up" ? (
                 <AiFillLike className="size-5 text-text-secondary" />
               ) : (
                 <AiOutlineLike className="size-5 text-text-secondary" />
@@ -68,14 +73,14 @@ const ChatListItem = (props: IProps) => {
             </Button>
           </Tooltip>
         )}
-        {liked ? null : (
+        {upOrDown === "up" ? null : (
           <Tooltip title="错误回复" placement="bottom">
             <Button
               className="!px-1"
               type="text"
-              onClick={() => setDisliked(true)}
+              onClick={() => changeUpOrDown("down")}
             >
-              {disliked ? (
+              {upOrDown === "down" ? (
                 <AiFillDislike className="size-5 text-text-secondary" />
               ) : (
                 <AiOutlineDislike className="size-5 text-text-secondary" />

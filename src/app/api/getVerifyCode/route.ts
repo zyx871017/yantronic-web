@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { phone, headers } = body;
   const resData = await serverRequest.post(
-    "https://cxy.lianwo123.com/api/v1/account/code",
+    "https://api.yantronic.com/api/v1/account/code",
     {
       phone,
       type: "login",

@@ -59,3 +59,10 @@ export async function deleteConversation(data: {
 export async function testSentry() {
   return clientRequest.post("/api/getChatList");
 }
+
+export async function fetchUpOrDown(data: {
+  questionId: number;
+  upOrDown: string;
+}): Promise<IResponse> {
+  return clientRequest.post("/api/upOrDown", data);
+}

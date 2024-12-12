@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   const page = searchParams.get("page");
   const pageSize = searchParams.get("pageSize");
   const resData: IChatDetailRes = await serverRequest.get(
-    "https://cxy.lianwo123.com/api/v1/conversation/question/list",
+    "https://api.yantronic.com/api/v1/conversation/question/list",
     {
       params: {
         conversationId,
