@@ -135,6 +135,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
           signal: signal,
           body: JSON.stringify({ messages, questionId }),
         });
+        const res = await response.json();
+        if (res.code === -100) {
+          setTypingAnswer(res.msg);
+          return;
+        }
 
         if (!response.ok) {
           console.error("Error sending request:", response.status);

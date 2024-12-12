@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import GlobalProvider from "@/components/GlobalProvider";
-// import Script from "next/script";
+import Script from "next/script";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -67,10 +67,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* <div id="watermark" className="watermark"></div> */}
+        <div id="watermark" className="watermark"></div>
         <GlobalProvider>{children}</GlobalProvider>
       </body>
-      {/* <Script id="custom-inline-script" strategy="afterInteractive">
+      <Script id="custom-inline-script" strategy="afterInteractive">
         {`function createWatermark(text) {
             const container = document.getElementById('watermark');
             const rowCount = Math.ceil(window.innerHeight / 100); // 每行的高度间隔
@@ -90,7 +90,7 @@ export default function RootLayout({
 
         // 创建水印
         createWatermark('言创AI生成')`}
-      </Script> */}
+      </Script>
     </html>
   );
 }

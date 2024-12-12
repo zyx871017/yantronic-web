@@ -534,7 +534,7 @@ body {
 
 .watermark-text {
   position: absolute;
-  color: var(--watermark-text); /* 半透明文字 */
+  color: var(--border-light); /* 半透明文字 */
   font-size: 16px;
   white-space: nowrap;
   transform: rotate(-30deg); /* 倾斜角度 */
