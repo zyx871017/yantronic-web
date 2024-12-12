@@ -114,9 +114,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     async (messages: IMessageItem[], questionId: number) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const checkRes: any = await fetchCheck({ messages, questionId });
-      console.log(checkRes);
       const content = checkRes.choices?.[0].message.content;
       if (content.indexOf("unsafe") >= 0) {
+        typingId.current = -1;
+        pushNewChat("我无法回答你此类问题！");
         setTypingAnswer("我无法回答你此类问题！");
         return;
       }
@@ -146,6 +147,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         });
 
         if (!response.ok) {
+          typingId.current = -1;
           console.error("Error sending request:", response.status);
           return;
         }

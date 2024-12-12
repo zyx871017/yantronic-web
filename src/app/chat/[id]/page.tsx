@@ -36,28 +36,34 @@ export default function ChatDetail() {
   }, []);
 
   useEffect(() => {
-    if (chatList.length && typingId.current === -1) {
-      const unfinishedAnswer = chatList.find((item) => item.status === 0);
+    if (
+      chatList.length &&
+      typingId.current === -1 &&
+      chatList[chatList.length - 1].status === 0
+    ) {
+      const unfinishedAnswer = chatList[chatList.length - 1];
       if (unfinishedAnswer) {
         typingId.current = unfinishedAnswer.itemId;
         const messages: IMessageItem[] = [];
-        chatList.forEach((item) => {
-          if (item.status === 1) {
-            messages.push({
-              role: "user",
-              content: item.question,
-            });
-            messages.push({
-              role: "assistant",
-              content: item.answer,
-            });
-          } else {
-            messages.push({
-              role: "user",
-              content: item.question,
-            });
-          }
-        });
+        chatList
+          .filter((item) => item.answer !== "我无法回答您此类问题")
+          .forEach((item) => {
+            if (item.status === 1) {
+              messages.push({
+                role: "user",
+                content: item.question,
+              });
+              messages.push({
+                role: "assistant",
+                content: item.answer,
+              });
+            } else {
+              messages.push({
+                role: "user",
+                content: item.question,
+              });
+            }
+          });
         sendStreamRequest(messages, unfinishedAnswer.itemId);
       }
     }
@@ -72,8 +78,8 @@ export default function ChatDetail() {
     }
   }, [typingAnswer]);
 
-  const getAnswerItem = (item: ChatItemType) => {
-    if (item.status === 0) {
+  const getAnswerItem = (item: ChatItemType, index: number) => {
+    if (item.status === 0 && index === chatList.length - 1) {
       return { answer: typingAnswer };
     }
     return item;
@@ -91,14 +97,14 @@ export default function ChatDetail() {
       style={{ height: "calc(100vh - 56px)" }}
     >
       <div ref={divRef} className="p-6 overflow-y-auto">
-        {chatList.map((item) => (
+        {chatList.map((item, index) => (
           <div key={item.itemId} className="w-[48rem] mx-auto">
             <div className="flex flex-col items-end px-5 py-4">
               <div className="px-5 py-2.5 rounded-3xl bg-main-surface-secondary">
                 {item.question}
               </div>
             </div>
-            <ChatListItem item={getAnswerItem(item)} />
+            <ChatListItem item={getAnswerItem(item, index)} />
           </div>
         ))}
       </div>
