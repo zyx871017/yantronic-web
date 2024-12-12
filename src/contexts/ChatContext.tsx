@@ -118,7 +118,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       if (content.indexOf("unsafe") >= 0) {
         typingId.current = -1;
         pushNewChat("我无法回答你此类问题！");
-        setTypingAnswer("我无法回答你此类问题！");
         return;
       }
       const url = "/api/fetchAsk";
