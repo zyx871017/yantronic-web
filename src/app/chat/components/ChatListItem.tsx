@@ -39,7 +39,7 @@ const ChatListItem = (props: IProps) => {
   };
   return (
     <div className="group relative mb-10">
-      <MarkdownReader text={item.answer || ""} />
+      <MarkdownReader text={item.answer?.trimStart() || ""} />
       <div className="absolute w-full h-10 -bottom-10 hidden group-hover:block">
         {copied ? (
           <Tooltip title="复制" placement="bottom">

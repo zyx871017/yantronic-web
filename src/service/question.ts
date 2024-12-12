@@ -66,3 +66,10 @@ export async function fetchUpOrDown(data: {
 }): Promise<IResponse> {
   return clientRequest.post("/api/upOrDown", data);
 }
+
+export async function fetchCheck(data: {
+  messages: IMessageItem[];
+  questionId?: number;
+}) {
+  return clientRequest.post("/api/checkChat", data);
+}

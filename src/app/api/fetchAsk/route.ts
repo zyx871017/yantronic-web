@@ -35,6 +35,7 @@ const checkChat = async (messages: IMessageItem[]) => {
   const reqBody = JSON.stringify({
     messages,
     model: "protect",
+    temperature: 0,
   });
   const options = {
     method: "POST",

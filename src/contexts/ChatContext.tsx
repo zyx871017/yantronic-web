@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import { useLoading } from "./LoadingContext";
 import {
+  fetchCheck,
   fetchUpOrDown,
   getChatDetail,
   ISaveChatRes,
@@ -111,6 +112,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
 
   const sendStreamRequest = useCallback(
     async (messages: IMessageItem[], questionId: number) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const checkRes: any = await fetchCheck({ messages, questionId });
+      console.log(checkRes);
+      const content = checkRes.choices?.[0].message.content;
+      if (content.indexOf("unsafe") >= 0) {
+        setTypingAnswer("我无法回答你此类问题！");
+        return;
+      }
       const url = "/api/fetchAsk";
       const token = localStorage.getItem("token");
       const headers = {
@@ -135,11 +144,6 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
           signal: signal,
           body: JSON.stringify({ messages, questionId }),
         });
-        const res = await response.json();
-        if (res.code === -100) {
-          setTypingAnswer(res.msg);
-          return;
-        }
 
         if (!response.ok) {
           console.error("Error sending request:", response.status);
