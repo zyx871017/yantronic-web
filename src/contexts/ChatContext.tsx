@@ -113,13 +113,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   const sendStreamRequest = useCallback(
     async (messages: IMessageItem[], questionId: number) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const checkRes: any = await fetchCheck({ messages, questionId });
-      const content = checkRes.choices?.[0].message.content;
-      if (content.indexOf("unsafe") >= 0) {
-        typingId.current = -1;
-        pushNewChat("我无法回答你此类问题！");
-        return;
-      }
+      // const checkRes: any = await fetchCheck({ messages, questionId });
+      // const content = checkRes.choices?.[0].message.content;
+      // if (content.indexOf("unsafe") >= 0) {
+      //   typingId.current = -1;
+      //   pushNewChat("我无法回答你此类问题！");
+      //   return;
+      // }
       const url = "/api/fetchAsk";
       const token = localStorage.getItem("token");
       const headers = {
