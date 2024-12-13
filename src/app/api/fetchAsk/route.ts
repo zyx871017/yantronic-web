@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import serverRequest from "@/service/serverRequest";
 import { getContent } from "@/utils/chat";
-import { IMessageItem } from "@/types/question";
+// import { IMessageItem } from "@/types/question";
 
 export async function GET() {
   return NextResponse.json({ message: "Hello from API Route!" });
@@ -30,50 +30,50 @@ const completeChat = async (
   }
 };
 
-const checkChat = async (messages: IMessageItem[]) => {
-  const targetUrl = "http://61.135.204.110:9997/v1/chat/completions";
-  const reqBody = JSON.stringify({
-    messages,
-    model: "protect",
-    temperature: 0,
-  });
-  const options = {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer sk-ycd3516Cf7cG1",
-    },
-  };
-  const res: any = await serverRequest.post(targetUrl, reqBody, options);
-  const content = res.choices?.[0].message.content;
-  if (content.indexOf("unsafe") >= 0) {
-    return false;
-  } else {
-    return true;
-  }
-};
+// const checkChat = async (messages: IMessageItem[]) => {
+//   const targetUrl = "http://61.135.204.110:9997/v1/chat/completions";
+//   const reqBody = JSON.stringify({
+//     messages,
+//     model: "protect",
+//     temperature: 0,
+//   });
+//   const options = {
+//     method: "POST",
+//     headers: {
+//       Authorization: "Bearer sk-ycd3516Cf7cG1",
+//     },
+//   };
+//   const res: any = await serverRequest.post(targetUrl, reqBody, options);
+//   const content = res.choices?.[0].message.content;
+//   if (content.indexOf("unsafe") >= 0) {
+//     return false;
+//   } else {
+//     return true;
+//   }
+// };
 
 export async function POST(request: Request) {
   const body = await request.json();
   const Headers = request.headers;
   const { messages, questionId } = body;
-  const checkRes: boolean = await checkChat(messages);
+  // const checkRes: boolean = await checkChat(messages);
   const question = messages[messages.length - 1].content;
-  if (!checkRes) {
-    completeChat(
-      {
-        itemId: questionId,
-        question,
-        answer: "我无法回答您此类问题",
-        status: 1,
-      },
-      Headers
-    );
-    return NextResponse.json({
-      msg: "我无法回答您此类问题",
-      data: { answer: "我无法回答您此类问题" },
-      code: -100,
-    });
-  }
+  // if (!checkRes) {
+  //   completeChat(
+  //     {
+  //       itemId: questionId,
+  //       question,
+  //       answer: "我无法回答您此类问题",
+  //       status: 1,
+  //     },
+  //     Headers
+  //   );
+  //   return NextResponse.json({
+  //     msg: "我无法回答您此类问题",
+  //     data: { answer: "我无法回答您此类问题" },
+  //     code: -100,
+  //   });
+  // }
   const targetUrl = "http://61.135.204.110:9997/v1/chat/completions";
   let answer = "";
   const reqBody = JSON.stringify({
