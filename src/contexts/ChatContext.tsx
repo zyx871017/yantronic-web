@@ -11,7 +11,6 @@ import React, {
 } from "react";
 import { useLoading } from "./LoadingContext";
 import {
-  fetchCheck,
   fetchUpOrDown,
   getChatDetail,
   ISaveChatRes,
