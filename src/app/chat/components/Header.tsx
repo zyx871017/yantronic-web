@@ -10,11 +10,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AiOutlineForm, AiOutlineMenuUnfold } from "react-icons/ai";
+import Personal from "./Personal";
 
 const Header = () => {
   const { setLoginOpen, loginOpen } = useLoginOpen();
   const { updateConversation } = useConversation();
   const [hasLogin, setHasLogin] = useState(false);
+  const [hasPersonal, setHasPersonal] = useState(false);
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
   const router = useRouter();
@@ -28,14 +30,32 @@ const Header = () => {
     router.push("/chat");
     setHasLogin(false);
   };
+  const setup = () => {
+    setHasPersonal(true);
+  };
+  const handleCancel = () => {
+    setHasPersonal(false);
+  };
+  const submitHandle = (value: { avatar: string; username: string }) => {
+    const { username, avatar } = value;
+    setUsername(username);
+    setAvatar(avatar);
+    localStorage.setItem("avatar", avatar);
+    localStorage.setItem("username", username);
+  };
   const items: MenuProps["items"] = [
-    { label: <span>{username}</span>, key: 0 },
-    { label: <span onClick={logout}>登出</span>, key: 1 },
+    { label: username, key: 0 },
+    { label: "登出", key: 1 },
+    { label: "设置", key: 2 },
   ];
+  const itemEvent: {
+    [key: string]: () => void;
+  } = {
+    1: logout,
+    2: setup,
+  };
   const onDropClick: MenuProps["onClick"] = ({ key }) => {
-    if (key === "1") {
-      logout();
-    }
+    itemEvent[key]();
   };
 
   useEffect(() => {
@@ -79,7 +99,11 @@ const Header = () => {
       </div>
       {hasLogin ? (
         <div className="cursor-pointer">
-          <Dropdown menu={{ items, onClick: onDropClick }} trigger={["click"]}>
+          <Dropdown
+            menu={{ items, onClick: onDropClick }}
+            trigger={["click"]}
+            overlayStyle={{ width: "200px" }}
+          >
             <Image
               className="rounded-full"
               alt=""
@@ -100,6 +124,11 @@ const Header = () => {
         open={isMobile() ? sideOpen : false}
         placement="left"
       ></Drawer>
+      <Personal
+        open={hasPersonal}
+        handleCancel={handleCancel}
+        submitHandle={submitHandle}
+      />
     </div>
   );
 };

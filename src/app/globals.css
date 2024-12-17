@@ -540,3 +540,11 @@ body {
   transform: rotate(-30deg); /* 倾斜角度 */
   user-select: none; /* 防止用户选中文字 */
 }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

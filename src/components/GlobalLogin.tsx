@@ -6,6 +6,9 @@ import { Button, Checkbox, message, Modal } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
+import { Input } from "antd";
+import type { GetProps } from "antd";
+type OTPProps = GetProps<typeof Input.OTP>;
 export default function GlobalLogin() {
   const { loginOpen, setLoginOpen } = useLoginOpen();
   const { updateConversation } = useConversation();
@@ -34,6 +37,7 @@ export default function GlobalLogin() {
 
     if (res.code === 0) {
       setCodeOpen(true);
+      setCode("");
     } else {
       message.error(res.msg);
     }
@@ -50,15 +54,15 @@ export default function GlobalLogin() {
   const phoneChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
   };
-  const codeChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+
+  const codeChange: OTPProps["onChange"] = async (value) => {
     if (!value) {
       setCode("");
     }
     if (!/^\d+$/.test(value)) {
       return;
     }
-    setCode(e.target.value);
+    setCode(value);
     if (value.length === 6) {
       const res: { code: number; msg: string } = await verifyCode({
         phone,
@@ -73,6 +77,9 @@ export default function GlobalLogin() {
         message.error(res.msg);
       }
     }
+  };
+  const sharedProps: OTPProps = {
+    onChange: codeChange,
   };
   return (
     <>
@@ -121,15 +128,10 @@ export default function GlobalLogin() {
         <div className="flex flex-col items-center">
           <div className="text-lg font-semibold">输入6位验证码</div>
           <div className="text-slate-500 mb-6">验证码已发送至{phone}</div>
-          <input
-            className="outline-none border-none w-full h-12 bg-slate-100 rounded-full px-4 mb-4"
-            placeholder="请输入验证码"
-            onChange={codeChange}
-            value={code}
-          />
+          <Input.OTP size="large" {...sharedProps} value={code} />
           <Button
             type="primary"
-            className="w-full !rounded-full !h-12 !font-bold !text-base mb-8"
+            className="w-full !rounded-full !h-12 !font-bold !text-base mb-8 mt-8"
             onClick={confirmPhone}
             disabled={countDown > 0}
           >
